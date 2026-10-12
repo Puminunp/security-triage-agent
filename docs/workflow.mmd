@@ -1,0 +1,31 @@
+flowchart TD
+    classDef llm fill:#ede7f6,stroke:#5e35b1,color:#1a1a1a
+    classDef code fill:#e3f2fd,stroke:#1565c0,color:#1a1a1a
+    classDef tool fill:#e8f5e9,stroke:#2e7d32,color:#1a1a1a
+    classDef human fill:#fff3e0,stroke:#ef6c00,color:#1a1a1a
+    classDef stop fill:#ffebee,stroke:#c62828,color:#1a1a1a
+
+    IN["CVE ID + snapshot path"]:::code --> INTAKE["1 Intake (code)<br/>validate CVE format, load snapshot,<br/>record SHA-256, model + code version"]:::code
+    INTAKE --> LOOP
+
+    subgraph AGENT["2 Evidence gathering loop (src/agent.py: investigate)"]
+        LOOP["LLM (gpt-oss:120b via Ollama Cloud)<br/>chooses the next tool + builds its arguments"]:::llm
+        LOOP -- "tool call" --> EXEC["registry.execute (code)<br/>schema check, run, wrap result"]:::code
+        EXEC --> NVD["lookup_vulnerability<br/>NVD API 2.0 (T1), live"]:::tool
+        EXEC --> KEV["lookup_kev<br/>CISA KEV feed (T2), live"]:::tool
+        EXEC --> ENV["lookup_environment<br/>snapshot: assets, S01-S08,<br/>flows, absences (simulated)"]:::tool
+        NVD & KEV & ENV --> LEDGER["Evidence ledger (code)<br/>ref R1..Rn, source, retrieved_at,<br/>live / cached / simulated; blinded copy to model"]:::code
+        LEDGER -- "tool result" --> LOOP
+        LOOP -- "submit_findings<br/>(facts per asset + citations)" --> VAL{"3 Validator (code)<br/>every fact == tool data?<br/>all affected products searched?<br/>cited evidence fetched?"}:::code
+        VAL -- "errors (max 2 corrections)" --> LOOP
+    end
+
+    VAL -- "accepted" --> POLICY["4 Policy (src/policy.py, code)<br/>gate -> priority -> severity -> matrix -> KEV +1 / Partial -1<br/>+ confidence"]:::code
+    POLICY --> DRAFT["5 Action text (LLM, JSON)<br/>next steps + evidence that would change it<br/>(cannot change the rating)"]:::llm
+    DRAFT --> OUT["6 Save (code)<br/>assessment.json, report.md, trace.jsonl,<br/>tool_results.json, messages.json, config.json"]:::code
+    OUT --> HUMAN["7 Analyst review (human)<br/>docs/evidence_review.md:<br/>check citations, sign off or override"]:::human
+
+    EXEC -. "3 rejected calls" .-> STOP1["STOP: no rating"]:::stop
+    NVD -. "fails, no cache" .-> STOP2["STOP: INSUFFICIENT_EVIDENCE<br/>names failed lookup"]:::stop
+    LOOP -. "model down / turn or call budget" .-> STOP3["STOP: no rating"]:::stop
+    POLICY -. "decisive fact unknown or conflicting" .-> REVIEW["INSUFFICIENT_EVIDENCE<br/>routed to analyst"]:::human
