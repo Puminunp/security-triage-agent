@@ -17,6 +17,7 @@ from src.config import REPO_ROOT
 
 EXPECTED = REPO_ROOT / "tests" / "expected_results.json"
 CONF_ORDER = {"Low": 0, "Medium": 1, "High": 2}
+MAX_ATTEMPTS = 3  # reruns only when the model service fails (stopped_model_error)
 
 
 def focus(assessment, asset):
@@ -102,8 +103,18 @@ def main(argv=None):
         if args.only and c["id"] not in args.only:
             continue
         print(f"[{c['id']}] {c['name']} ...", flush=True)
-        a, run_dir = run(exp["cve_id"], snapshot_path=c["snapshot"], faults=c["faults"],
-                         label=f"check{c['id']}", out_root=out_root)
+        attempts = []
+        for attempt in range(1, MAX_ATTEMPTS + 1):
+            a, run_dir = run(exp["cve_id"], snapshot_path=c["snapshot"], faults=c["faults"],
+                             label=f"check{c['id']}" + (f"_try{attempt}" if attempt > 1 else ""),
+                             out_root=out_root)
+            attempts.append({"run_dir": str(run_dir.relative_to(REPO_ROOT)),
+                             "status": a["run"]["status"], "stop_reason": a["run"]["stop_reason"]})
+            # A model-service outage is not the behavior under test (unless the check
+            # expects it): rerun the check, and keep every attempt in the summary.
+            if a["run"]["status"] != "stopped_model_error" or c.get("run_status") == "stopped_model_error":
+                break
+            print(f"     attempt {attempt}: model service error, rerunning", flush=True)
         res = (check_policy if kind == "policy" else check_failure)(c, a, asset)
         if c["id"] == "0":
             scan = check_scan(exp["secondary_scan"], a)
@@ -111,7 +122,7 @@ def main(argv=None):
                          "expected": exp["secondary_scan"], **scan,
                          "run_dir": str(run_dir.relative_to(REPO_ROOT))})
         rows.append({"id": c["id"], "name": c["name"], "kind": kind, "expected": c, **res,
-                     "run_dir": str(run_dir.relative_to(REPO_ROOT))})
+                     "run_dir": str(run_dir.relative_to(REPO_ROOT)), "attempts": attempts})
         print(f"     {'PASS' if res['pass'] else 'FAIL'} {res['problems'] or ''}", flush=True)
 
     rows.sort(key=lambda r: r["id"])
@@ -134,7 +145,9 @@ def main(argv=None):
             exp_s = ", ".join(f"{k}={v}" for k, v in e.items()
                               if k not in ("id", "name", "snapshot", "faults", "note"))
             act_s = ", ".join(f"{k}={v}" for k, v in r["actual"].items() if v not in (None, []))
-        md.append(f"| {r['id']} | {r['name']} | {exp_s} | {act_s} | {'PASS' if r['pass'] else 'FAIL: ' + '; '.join(r['problems'])} | `{r['run_dir']}` |")
+        tries = len(r.get("attempts", [])) or 1
+        note = f" (attempt {tries}; earlier attempts stopped on model-service errors)" if tries > 1 else ""
+        md.append(f"| {r['id']} | {r['name']} | {exp_s} | {act_s} | {'PASS' if r['pass'] else 'FAIL: ' + '; '.join(r['problems'])}{note} | `{r['run_dir']}` |")
     (REPO_ROOT / out_root / "summary.md").write_text("\n".join(md) + "\n", encoding="utf-8")
     print(f"\nsummary: {out_root}/summary.md")
     return 0 if all(r["pass"] for r in rows) else 1

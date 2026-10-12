@@ -1,7 +1,7 @@
 """Prompts and the submit_findings tool schema. Kept apart from the loop so they
 can be reviewed and versioned on their own."""
 
-PROMPT_VERSION = "1.0"
+PROMPT_VERSION = "1.1"
 
 SYSTEM_PROMPT = """You are the evidence-gathering step of a security triage agent for Northbridge \
 Services, a fictional Windows enterprise. You are given one CVE. Your job is to find every \
@@ -104,6 +104,7 @@ restate it differently. Use only the facts given. Return JSON only."""
 ACTION_TEMPLATE = """CVE: {cve_id}
 Threat summary: {threat}
 KEV: {kev}
+Environment snapshot date: {snapshot_date}
 
 Assessed assets (decision already fixed by the policy):
 {assets}
@@ -112,5 +113,9 @@ For each asset key, return:
 - "recommended_action": 1-3 concrete next steps for the IT/security team (patch, interim \
 mitigation, what to check). For INSUFFICIENT_EVIDENCE, say which fact an analyst must obtain.
 - "would_change_decision": the specific evidence that would change or resolve this decision.
+
+Rules: each value is ONE plain string (number the steps inside it, e.g. "1) ... 2) ..."), not a \
+list. Base every step on the facts above; do not invent requirements, thresholds or deadlines. \
+If the KEV due date is before the snapshot date, say the federal due date has already passed.
 
 Return JSON: {{"<key>": {{"recommended_action": "...", "would_change_decision": "..."}}, ...}}"""

@@ -57,7 +57,7 @@ class OllamaClient:
         reason = None
         for attempt in range(self.retries + 1):
             if attempt:
-                time.sleep(3 * attempt)
+                time.sleep(5 * attempt)
             try:
                 resp = requests.post(f"{self.base_url}/api/chat", json=body, timeout=self.timeout,
                                      headers={"Authorization": f"Bearer {self.api_key}"})

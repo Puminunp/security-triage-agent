@@ -27,7 +27,7 @@ llm:
     temperature: 0
     seed: 42
   timeout_seconds: 180
-  retries: 5              # model call retries (3, 6, 9, 12, 15 s backoff); then the run stops
+  retries: 5              # model call retries (5, 10, 15, 20, 25 s backoff); then the run stops
 
 # Agent loop limits (docs/rating_policy.md section 8, docs/architecture.md)
 agent:

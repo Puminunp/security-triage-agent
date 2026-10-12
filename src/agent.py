@@ -276,6 +276,13 @@ def template_action(item, threat):
             "log on locally.")
 
 
+def _as_text(value):
+    """The model sometimes returns a list of steps; store one numbered string."""
+    if isinstance(value, list):
+        return " ".join(f"{i}) {str(v).strip()}" for i, v in enumerate(value, 1))
+    return str(value).strip()
+
+
 def draft_actions(llm, rated, threat, intake_info, trace, ledger):
     """Model drafts action text for non-Low results; Low results use a fixed template."""
     keys, lines = {}, []
@@ -305,6 +312,7 @@ def draft_actions(llm, rated, threat, intake_info, trace, ledger):
             kev=json.dumps({"in_kev": threat["in_kev"], "dateAdded": entry.get("dateAdded"),
                             "dueDate": entry.get("dueDate"),
                             "requiredAction": entry.get("requiredAction")}),
+            snapshot_date=intake_info.get("snapshot_date"),
             assets="\n".join(lines))
         try:
             msg = llm.chat([{"role": "system", "content": prompts.ACTION_SYSTEM},
@@ -322,8 +330,8 @@ def draft_actions(llm, rated, threat, intake_info, trace, ledger):
     for i, item in enumerate(rated, 1):
         d = drafted.get(f"A{i}")
         if d:
-            item["action"] = {"recommended_action": str(d["recommended_action"]),
-                              "would_change_decision": str(d.get("would_change_decision", "")),
+            item["action"] = {"recommended_action": _as_text(d["recommended_action"]),
+                              "would_change_decision": _as_text(d.get("would_change_decision", "")),
                               "drafted_by": "model (rating fixed by policy code)"}
         else:
             act, change = template_action(item, threat)
