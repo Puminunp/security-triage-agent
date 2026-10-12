@@ -1,0 +1,43 @@
+{
+  "run_id": "20261012T185643Z_check4c",
+  "label": "check4c",
+  "faults": [
+    "bad-tool"
+  ],
+  "model": {
+    "provider": "ollama-cloud",
+    "base_url": "https://ollama.com",
+    "model": "gpt-oss:120b",
+    "options": {
+      "temperature": 0,
+      "seed": 42
+    },
+    "think": "medium",
+    "timeout_seconds": 180,
+    "retries": 5
+  },
+  "prompt_version": "1.1",
+  "agent_limits": {
+    "max_model_turns": 30,
+    "max_tool_calls": 60,
+    "max_rejected_calls": 3,
+    "max_submissions": 3,
+    "max_text_replies": 2
+  },
+  "sources": {
+    "nvd_base_url": "https://services.nvd.nist.gov/rest/json/cves/2.0",
+    "kev_url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+    "cache_dir": "cache",
+    "timeouts": {
+      "nvd_seconds": 15,
+      "kev_seconds": 15
+    },
+    "retries": 1,
+    "retry_wait_seconds": 2
+  },
+  "code_version": {
+    "commit": "860090785513dace0642dd033c87df5b0fd7b998",
+    "uncommitted_changes": false
+  },
+  "policy": "docs/rating_policy.md v1.0"
+}

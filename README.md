@@ -1,43 +1,75 @@
 # Security Triage Agent: Agentic CTI Risk Triage for Northbridge Services
 
-An agentic cyber threat intelligence (CTI) risk-triage system that rates a CVE against a fictional Windows enterprise, Northbridge Services. The agent collects vulnerability evidence (NVD, CISA KEV, vendor advisories), checks it against an environment snapshot of the organization's assets, and applies a documented applicability-and-impact rating policy to produce a High / Medium / Low rating per asset, or INSUFFICIENT_EVIDENCE when a decisive fact is missing or conflicting. Results are compared against expected results set before any run and against a baseline.
+An agentic cyber threat intelligence (CTI) risk-triage system that rates a CVE against a fictional Windows enterprise, Northbridge Services. Given only a CVE ID, the agent decides which lookups to run, collects vulnerability evidence (NVD, CISA KEV), finds the affected assets in an environment snapshot of the organization, and applies a documented applicability-and-impact rating policy to produce a High / Medium / Low rating per asset, or INSUFFICIENT_EVIDENCE when a decisive fact is missing or conflicting. Results are compared against expected results set before any run and against a baseline.
 
 ## Group members
 
-| Name | Role A/B/C/D | Contributions |
+| Name | Roles | Contributions |
 |---|---|---|
-| _TBD_ | A | Case selection and sources; environment v1.1, change log and test variants; rating policy; threat prerequisites; expected results; reference policy implementation |
-| _TBD_ | B | Agent tools and registry; NVD and KEV clients; cache and failure fallback; raw source data and comparison; tool tests; tool contracts |
-| _TBD_ | C | _TBD_ |
-| _TBD_ | D | _TBD_ |
+| Puminun Prommark (pp273) | A, B | **A:** case selection and sources; environment v1.1, change log and test variants; rating policy; threat prerequisites; expected results; reference policy implementation. **B:** agent tools and registry; NVD and KEV clients; cache and failure fallback; raw source data and comparison; tool tests; tool contracts |
+| Supawich Puengdang (sp803) | C, D | **C:** agent loop and orchestration; prompts; policy code; output validation; evidence ledger and blinding; LLM client; assessment and report output. **D:** workflow diagram and architecture document; offline test suite (policy parity, agent, validation, failures); live check runner; controlled failures; expected-vs-actual results; evidence review checklist; baseline; design-studio worksheets |
+| Both | — | Consensus rating, review of the final assessment and its citations, README review, video demo |
 
 ## Repository layout
-
-`outputs/` and `baseline/` are planned and are added as the work lands.
 
 ```
 inputs/        Selected CVE, source list, transcribed and raw NVD / KEV data
 environment/   Northbridge environment snapshot (v1.1), change log, test variants and generator
-docs/          Rating policy, threat prerequisites, expected results, handoff notes, tool contracts
-reference/     Runnable reference implementation of the rating policy
-config/        settings.yaml: snapshot path, source URLs, timeouts (no secrets)
-src/sources/   NVD and CISA KEV clients, file cache
-src/tools/     Environment lookups and the tool registry the agent calls
-tests/         Tests (pytest)
+docs/          Architecture and workflow diagram, rating policy, threat prerequisites, tool contracts,
+               expected and actual test results, evidence review, design-studio worksheets
+reference/     Runnable reference implementation of the rating policy (Student A's spec)
+config/        settings.yaml: snapshot path, source URLs, model settings, agent limits (no secrets)
+src/sources/   NVD and CISA KEV clients, file cache                          (Student B)
+src/tools/     Environment lookups and the tool registry the agent calls     (Student B)
+src/agent.py   Orchestration: intake, tool loop, validation gate, policy, actions, save (Student C)
+src/llm.py     Ollama Cloud client                                            (Student C)
+src/prompts.py System prompt, submit_findings schema, action prompt          (Student C)
+src/validation.py  Checks the model's facts against the tool results         (Student C)
+src/evidence.py    Evidence ledger, citations, blinding of test-variant names (Student C)
+src/policy.py  Rating policy as code                                         (Student C)
+src/report.py  assessment.json and report.md                                 (Student C)
+src/faults.py  Controlled failures for testing                               (Student D)
+src/run_checks.py  Live policy checks + failures vs expected results         (Student D)
+tests/         pytest: tools (B); policy parity, agent, validation (D); expected_results.json
 cache/         Cached NVD and KEV responses, used when a live lookup fails
-outputs/       Agent run outputs (planned)
-baseline/      Baseline results for comparison (planned)
+outputs/       Saved runs: outputs/checks_<timestamp>/ has every live check run
+baseline/      Frozen Assignment 3 baseline for Assignment 4 (inputs, config, code version, outputs)
 ```
+
+**Where each concern lives** (the assignment asks for these to be separately identifiable): source access `src/sources/`; tools `src/tools/`; model settings `config/settings.yaml` (`llm:`) and `src/llm.py`; orchestration `src/agent.py`; rating logic `src/policy.py`; validation `src/validation.py`.
 
 ## Setup
 
-Python 3.10 or later.
+Tested with Python 3.13.5 on macOS (3.10 or later should work). Dependencies are pinned in `requirements.txt`: requests 2.32.3, PyYAML 6.0.2, python-dotenv 1.1.0, pytest 8.3.4. No agent framework is used.
 
 ```
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env        # then put your Ollama Cloud key in OLLAMA_API_KEY
 ```
 
-Copy `.env.example` to `.env` and fill in the values; `.env` is ignored by git and must never be committed. `NVD_API_KEY` is optional: the NVD lookup works without it at a lower rate limit.
+`.env` is ignored by git and must never be committed. `NVD_API_KEY` is optional: the NVD lookup works without it at a lower rate limit.
+
+**Model:** `gpt-oss:120b` on [Ollama Cloud](https://docs.ollama.com/cloud) (free tier), temperature 0, seed 42, `think: medium`. Change it in `config/settings.yaml` or with `LLM_MODEL` in `.env`. The model must support tool calling.
+
+## Running the complete workflow
+
+```
+python -m src.main
+```
+
+This assesses CVE-2026-85880 against `environment/northbridge-v1.1.json`, prints the non-Low decisions, and saves `outputs/<run_id>/` with `assessment.json`, `report.md`, `trace.jsonl`, `tool_results.json`, `messages.json` and `config.json`. A run takes about 30–60 seconds.
+
+Options: `--cve`, `--snapshot environment/variants/env_patched.json`, `--fault nvd-down` (also `nvd-down-no-cache`, `kev-down`, `bad-tool`, `llm-down`), `--label`, `--out`.
+
+To run every policy check and controlled failure with the live model and compare them with the expected results:
+
+```
+python -m src.run_checks
+```
+
+This writes `outputs/checks_<timestamp>/summary.md` (expected vs actual) and one run folder per check.
 
 ## Running the tests
 
@@ -45,7 +77,7 @@ Copy `.env.example` to `.env` and fill in the values; `.env` is ignored by git a
 python -m pytest
 ```
 
-The tests use no LLM and no network; NVD and KEV responses are replayed from the raw files in `inputs/`. To also call the real services, set the environment variable `RUN_LIVE=1`.
+The tests use no LLM and no network. NVD and KEV responses are replayed from the raw files in `inputs/`, and a scripted model stands in for the LLM. To also call the real NVD and KEV services, set the environment variable `RUN_LIVE=1`.
 
 To check Student A's policy reference against the snapshot and variants:
 
@@ -53,6 +85,18 @@ To check Student A's policy reference against the snapshot and variants:
 python reference/policy_reference.py environment/northbridge-v1.1.json
 python reference/policy_reference.py environment/variants/env_patched.json W15
 ```
+
+## Results at a glance
+
+| Document | What it contains |
+|---|---|
+| `docs/architecture.md` | Design: risk question, workflow diagram, model/code/tool/human steps, tool contracts, evidence flow, failure paths, acceptance test, design-vs-implementation changes |
+| `docs/workflow.png` | Workflow diagram (source `docs/workflow.mmd`) |
+| `docs/rating_policy.md` | The applicability-and-impact policy with justifications |
+| `docs/test_results.md` | Expected vs actual for the three policy checks and the controlled failures, demonstration checklist, limitations |
+| `docs/evidence_review.md` | Human review of the final assessment and its citations |
+| `docs/design_studio/` | In-class worksheets (Team 3, Team 6) and the revised worksheet for this project |
+| `baseline/` | Frozen Assignment 3 baseline |
 
 ## Student A sections
 
@@ -144,3 +188,64 @@ NVD and KEV clients; file cache and retry-then-cache fallback; environment looku
 ### AI assistance
 
 Claude (Anthropic) helped Student B write the source clients, environment tools, registry, tests and tool contract documentation, fetch the raw NVD and KEV data, and compare it with the transcribed files. Student B reviewed the output; the tests were run before each commit.
+
+## Student C sections
+
+### Agent design
+
+The agent takes only a CVE ID. A `gpt-oss:120b` model on Ollama Cloud decides which tools to call and with what arguments. It looks up the CVE in NVD and KEV, searches the environment for every affected product, fetches the evidence records each candidate asset cites, and then calls `submit_findings` with the facts for each asset. Code then takes over:
+
+1. **Validation** (`src/validation.py`). Every submitted fact (OS build, affected product, fixed build, the build comparison, low-privilege access, conflicts) is compared with the tool result it came from. The validator also checks that every affected product was searched for in the environment, that every asset running one is included, and that its cited evidence was fetched. Errors go back to the model, which gets two chances to fix them. An asset whose facts still don't match is rated INSUFFICIENT_EVIDENCE. A run with open coverage gaps can never come out as "Low".
+2. **Policy** (`src/policy.py`). Applies `docs/rating_policy.md` to the validated **tool data** and returns the decision, the rule that fired and the confidence. The model never chooses a rating.
+3. **Action text.** The model drafts the recommended action and the evidence that would change the decision for non-Low assets (labeled `drafted_by: model`). Low assets get a fixed template.
+4. **Save.** The assessment, a readable report, the full trace, every raw tool result, the model conversation and the configuration are saved.
+
+The model sees a **blinded** copy of each tool result: the snapshot's file name and ID are replaced with neutral labels, so a test variant such as `env_conflict.json` cannot hint at the expected answer. Citations in the saved assessment use the real locators.
+
+### Assessment format
+
+`outputs/<run>/assessment.json` has one entry per affected asset record:
+
+- **Asset and threat:** asset ID, instance, role, zone, locator
+- **Decision and status:** `rated` or `needs_analyst_review`
+- **Rationale:** applicability level and facts, priority and reason, severity band, KEV and Partial modifiers, the policy rule that fired
+- **Evidence:** each citation has a ref, source ID (T1, T2, S0x), tool, URL or locator, `retrieved_at`, and `live`, `cached` or `simulated`
+- **Uncertainty:** assumptions (A1–A15 that apply), decisive and non-decisive unknowns, confidence and why
+- **Action:** recommended next step and the evidence that would change the decision
+
+Top-level sections cover the threat, the overall result, product coverage, the external lookups, agent activity and human review status.
+
+### Contributions: Student C
+
+Agent loop and orchestration; system and action prompts; the `submit_findings` contract; output validator; evidence ledger and blinding; policy code; Ollama Cloud client; assessment and report output; CLI.
+
+## Student D sections
+
+### Testing
+
+- **Offline** (`python -m pytest`, 111 tests, no LLM or network):
+  - `src/policy.py` gives the same applicability, priority and decision as Student A's reference on all 48 asset records of the base snapshot and all four variants.
+  - With a scripted model, the agent produces the expected result for all five checks.
+  - Every controlled failure behaves as designed: NVD down with and without cache, KEV down, 3 invalid tool calls, model outage, text-only replies.
+  - The validator catches a made-up build and a fixed build "from memory".
+  - The model never sees a variant's name.
+- **Live** (`python -m src.run_checks`): the same checks against the real model and the real NVD and KEV, compared with `tests/expected_results.json`. That file was copied from `docs/expected_results.md`, which was set before any run.
+
+Expected vs actual results, the demonstration checklist and limitations are in `docs/test_results.md`. The human evidence review is in `docs/evidence_review.md`. The frozen baseline for Assignment 4 is in `baseline/`.
+
+### Limitations (agent and tests)
+
+- **The model is not fully deterministic.** Ollama Cloud doesn't guarantee that the same seed gives the same output. Tool choices and the number of correction rounds vary between runs. The decision doesn't vary, because code computes it from validated tool data.
+- **Coverage is measured against the snapshot.** "Every affected asset found" means every asset record the agent's searches returned. A product named differently in the snapshot could be missed, the same limitation as `search_assets`.
+- **Coverage checks can use not_found searches.** A complete search with no matches counts toward coverage ("we looked"), not as proof that the product is absent.
+- **Conflict detection is narrow.** Code detects conflicts with the same rule as the reference: an evidence fact `<asset_id>: ...` that states a different build. Other kinds of disagreement are caught only if the model reports them.
+- **The invalid-tool failure is induced.** It is triggered by an instruction in the task message, because a real model rarely asks for a non-existent tool on its own. The 3-rejection stop is shown with a scripted model.
+- **Confidence is coarse.** It follows the policy's three rules, so almost every applicable result is Medium: the builds and the access path come from group-simulated evidence (S07, S08).
+
+### Contributions: Student D
+
+Architecture document and workflow diagram; offline test suite; live check runner and controlled-failure injection; expected-vs-actual results; evidence review checklist; baseline; design-studio worksheets.
+
+### AI assistance (Students C and D)
+
+Claude (Anthropic) helped Supawich write the agent loop, prompts, validator, policy code, report output, tests, check runner, diagram and documentation. It also ran the live checks. Supawich reviewed the design decisions (model provider, scope, framework, workflow) and the outputs. The group reviewed the final assessment and its citations (`docs/evidence_review.md`).

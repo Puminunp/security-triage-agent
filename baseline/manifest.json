@@ -1,0 +1,57 @@
+{
+  "frozen_from": "outputs/checks_20261012T185021Z",
+  "code_version": {
+    "commit": "860090785513dace0642dd033c87df5b0fd7b998",
+    "uncommitted_changes": false
+  },
+  "model": {
+    "provider": "ollama-cloud",
+    "base_url": "https://ollama.com",
+    "model": "gpt-oss:120b",
+    "options": {
+      "temperature": 0,
+      "seed": 42
+    },
+    "think": "medium",
+    "timeout_seconds": 180,
+    "retries": 5
+  },
+  "prompt_version": "1.1",
+  "python": "3.13.5",
+  "pip_freeze": [
+    "certifi==2026.7.22",
+    "charset-normalizer==3.5.2",
+    "idna==3.20",
+    "iniconfig==2.3.1",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pytest==8.3.4",
+    "python-dotenv==1.1.0",
+    "PyYAML==6.0.2",
+    "requests==2.32.3",
+    "urllib3==2.8.0"
+  ],
+  "files": {
+    "checks/summary.json": "c03f5f8de1e5fec26bd7882f1d7599b53984bee39acceb22656dac30c5c332be",
+    "checks/summary.md": "5cfde2ba950a5452a05800c097d8d91e54a7d02cc0ce01733387368221f00191",
+    "inputs/cache__kev_feed.json": "5e84bbefef401bad92cb1f4328d79206f38ef450ec945294ad6575b5c8b524e3",
+    "inputs/cache__nvd_CVE-2026-85880.json": "e574c5cefc5b0b083946a4d6f3f763ce73479fa0307446150ac3afb4fc04b7b7",
+    "inputs/config__settings.yaml": "158827001b520ab3e6ff34050042d8001b7eb52c7725ab0d6e358cdcc117e508",
+    "inputs/environment__northbridge-v1.1.json": "9d17ea840bd96ede94d2c3bb8c3ab0b413c40398a869e1d485857a2f07147f4a",
+    "inputs/environment__variants__env_conflict.json": "07444eedd399df5ad6edd6dfed8e5747164f2d74c24eca2bc3059fe3ddbec72c",
+    "inputs/environment__variants__env_low_priority.json": "8db4e4c79ddd2d770e444124c9db8f7cbfcb6f66ebb62dfab253de26d6c9c3bd",
+    "inputs/environment__variants__env_missing.json": "1a08b3f4cdb0f19e2284aaada79a95e6cf7402efb97cc20810afd76d2c0ca1f8",
+    "inputs/environment__variants__env_patched.json": "4ef6a5e56ca1b9b8794d7b497fcfaa597d53b26d664611868ad00b9e3dbb3422",
+    "inputs/inputs__CVE-2026-85880_kev_raw.json": "575900621fcea6c9ac3a6565cbe81c38231f31b75807bd9e5dd7638dc327de67",
+    "inputs/inputs__CVE-2026-85880_nvd_raw.json": "c752ce16fc8ed8fd45402e143f33d3032ca8c8d37ac09f26f649ef38031b867e",
+    "inputs/inputs__SOURCES.md": "b551cc3f20150ef7fcd4919ddc1108c66e697f4c41a92572b00a4248cd363c10",
+    "inputs/requirements.txt": "afec87eb7e88a8c0ca8cc28bcd30a0824e102eb06442722ef043bae12d570494",
+    "inputs/tests__expected_results.json": "b63aecf154c9c53edbe2ca54994d561d290f3689a84c45fd23d8c72834a72c3b",
+    "main_run/assessment.json": "efbfeb67045ee23e3c021a77bbde3a3789e732f2c04beafa7cd79db2754a6ad8",
+    "main_run/config.json": "61304c9fc6e9d6fd40132e8a89916155742072f5d7dbf966819906ac7a975f93",
+    "main_run/messages.json": "dac88b568bffda4fc01945a6bb86f62d275cbd2a1116fde1b147a7d38eb434df",
+    "main_run/report.md": "fa13512734f3d4d1ddb0e84dddf3f2bccdbfaccadb270b73d9e0909d37f0a18f",
+    "main_run/tool_results.json": "2b20f077343ac2dfb518c99114cf4826c078c54f5498a256d4154910d1424d78",
+    "main_run/trace.jsonl": "66853c3ea327f6959a965ab9117c7d6b41c01c9470a6d13cdab71808696c88ea"
+  }
+}

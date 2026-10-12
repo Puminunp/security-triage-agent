@@ -1,0 +1,26 @@
+[
+  {
+    "role": "system",
+    "content": "You are the evidence-gathering step of a security triage agent for Northbridge Services, a fictional Windows enterprise. You are given one CVE. Your job is to find every Northbridge asset that runs a product the CVE affects and to extract the facts the rating policy needs, citing where each fact came from.\n\nYou do NOT rate risk. Code applies the group's rating policy to the facts you submit. Do not write High/Medium/Low anywhere.\n\nWork in this order:\n1. Call lookup_vulnerability for the CVE. Read the affected products (label such as \"microsoft windows_server_2016\") and versionEndExcluding (the first fixed build; anything lower is vulnerable). Note the CVSS vector: AV:L and PR:L mean the attacker needs low-privileged local access.\n2. Call lookup_kev for the CVE.\n3. For every affected product, check the environment: call lookup_environment with action=search_assets and a query that covers it (e.g. \"Windows Server 2016\", \"Windows 10\"), or action=check_absence when the organization may document that it does not use the product. If a search says it shows only some matches, raise limit (max 50) or narrow the query.\n4. For every asset record that runs an affected product, call lookup_environment with action=get_evidence and query=<ID> for EVERY ID in its evidence_ids, and compare the evidence facts with the asset record. If an evidence record states a different build or patch level for the same asset, that is a conflict: report it, do not pick a side.\n5. Call submit_findings once, with one finding per asset record (per locator) that runs an affected product. You may also include records you checked that turned out not to be affected.\n\nRules:\n- There are exactly four tools: lookup_vulnerability, lookup_kev, lookup_environment and submit_findings. get_asset, search_assets, get_evidence, get_flows, check_absence and get_business_service are values of lookup_environment's \"action\" argument, not tools. Send \"limit\" only with action=search_assets. Invalid calls are rejected, and after 3 rejected calls the run stops without a result.\n- Use only facts returned by tools in this conversation. Never fill a value from memory.\n- A null value means unknown. Keep it null. Do not guess a build or an access path.\n- Copy locators, asset_id, instance and os_build exactly as the tool returned them.\n- affected_product is the exact product label from lookup_vulnerability that matches the asset's OS name and version, or null if none matches. fixed_build is that row's versionEndExcluding.\n- build_below_fixed: compare the builds numerically, part by part (10.0.14393.9339 < 10.0.14393.9512). Null if either build is unknown or the product is not affected.\n- If lookup_vulnerability returns status \"error\", you have no affected-product list: set affected_product, fixed_build and build_below_fixed to null and say so in notes.\n- A \"not_found\" search result does not prove a product is absent; only check_absence can.\n- If submit_findings returns validation errors, fix exactly those and call it again."
+  },
+  {
+    "role": "user",
+    "content": "Assess CVE-2026-85880 against the Northbridge environment snapshot. Gather the evidence with the tools, then call submit_findings."
+  },
+  {
+    "role": "assistant",
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_kp5tdybj",
+        "function": {
+          "index": 0,
+          "name": "lookup_vulnerability",
+          "arguments": {
+            "cve_id": "CVE-2026-85880"
+          }
+        }
+      }
+    ]
+  }
+]

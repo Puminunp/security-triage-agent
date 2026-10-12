@@ -1,0 +1,38 @@
+# Project settings. No secrets here: API keys go in .env (see .env.example).
+# Relative paths are resolved from the repository root.
+
+environment_snapshot: environment/northbridge-v1.1.json
+
+nvd_base_url: https://services.nvd.nist.gov/rest/json/cves/2.0
+kev_url: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+
+cache_dir: cache
+
+timeouts:
+  nvd_seconds: 15
+  kev_seconds: 15
+
+# One retry after a failed external lookup, then fall back to the cache
+# (docs/rating_policy.md section 8).
+retries: 1
+retry_wait_seconds: 2
+
+# Model (Ollama Cloud). The API key is OLLAMA_API_KEY in .env; LLM_MODEL in .env
+# overrides the model name.
+llm:
+  base_url: https://ollama.com
+  model: gpt-oss:120b
+  think: medium          # gpt-oss reasoning effort: low | medium | high
+  options:
+    temperature: 0
+    seed: 42
+  timeout_seconds: 180
+  retries: 5              # model call retries (5, 10, 15, 20, 25 s backoff); then the run stops
+
+# Agent loop limits (docs/rating_policy.md section 8, docs/architecture.md)
+agent:
+  max_model_turns: 30      # model replies before the run stops without a rating
+  max_tool_calls: 60       # tool calls before the run stops without a rating
+  max_rejected_calls: 3    # unknown tool / invalid arguments; then stop, no rating
+  max_submissions: 3       # submit_findings attempts (first + 2 corrections)
+  max_text_replies: 2      # replies with no tool call before the run stops

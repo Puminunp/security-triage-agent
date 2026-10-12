@@ -1,0 +1,22 @@
+[
+  {
+    "ref": "R1",
+    "tool": "lookup_vulnerability",
+    "args": {
+      "cve_id": "CVE-2026-85880"
+    },
+    "result": {
+      "tool": "lookup_vulnerability",
+      "args": {
+        "cve_id": "CVE-2026-85880"
+      },
+      "status": "error",
+      "source": "http://127.0.0.1:9/unreachable?cveId=CVE-2026-85880",
+      "retrieved_at": "2026-10-12T18:56:43Z",
+      "source_mode": "live",
+      "data": null,
+      "unknown_fields": [],
+      "error": "lookup failed after 2 attempts (ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=9): Max retries exceeded with url: /unreachable?cveId=CVE-2026-85880 (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [Errno 61] Connection refused\"))); no cached copy"
+    }
+  }
+]

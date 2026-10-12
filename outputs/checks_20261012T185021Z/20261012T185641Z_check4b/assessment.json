@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "run": {
+    "run_id": "20261012T185641Z_check4b",
+    "label": "check4b",
+    "started_at": "2026-10-12T18:56:41Z",
+    "finished_at": "2026-10-12T18:56:43Z",
+    "status": "stopped_decisive_lookup_failed",
+    "stop_reason": "lookup_vulnerability failed (lookup failed after 2 attempts (ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=9): Max retries exceeded with url: /unreachable?cveId=CVE-2026-85880 (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [Errno 61] Connection refused\"))); no cached copy); affected products and fixed builds are unknown",
+    "faults": [
+      "nvd-down-no-cache"
+    ],
+    "model": "gpt-oss:120b",
+    "prompt_version": "1.1",
+    "code_version": {
+      "commit": "860090785513dace0642dd033c87df5b0fd7b998",
+      "uncommitted_changes": false
+    }
+  },
+  "intake": {
+    "cve_id": "CVE-2026-85880",
+    "risk_question": "What is the risk that CVE-2026-85880 is exploited on Northbridge Services assets, given environment snapshot northbridge-v1.1 (as of 2026-10-01)?",
+    "snapshot_path": "environment/northbridge-v1.1.json",
+    "snapshot_file": "northbridge-v1.1.json",
+    "snapshot_id": "northbridge-v1.1",
+    "snapshot_date": "2026-10-01",
+    "snapshot_source_mode": "simulated",
+    "snapshot_sha256": "9d17ea840bd96ede94d2c3bb8c3ab0b413c40398a869e1d485857a2f07147f4a",
+    "variant_change": null
+  },
+  "threat": {
+    "cve_id": "CVE-2026-85880",
+    "description": null,
+    "published": null,
+    "cwe": null,
+    "cvss_v31": {
+      "base_score": null,
+      "vector": null,
+      "score_source": null,
+      "score_type": null
+    },
+    "kev": {
+      "in_kev": null,
+      "source": "unknown (lookup_kev failed and no NVD KEV fields)",
+      "date_added": null,
+      "due_date": null,
+      "required_action": null,
+      "known_ransomware_use": null,
+      "note": "absence from KEV does not establish safety"
+    },
+    "severity_note": "CVSS is the flaw's technical severity in general; the decision per asset is local risk from the applicability-and-impact policy.",
+    "sources": []
+  },
+  "overall": {
+    "decision": "INSUFFICIENT_EVIDENCE",
+    "note": "lookup_vulnerability failed (lookup failed after 2 attempts (ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=9): Max retries exceeded with url: /unreachable?cveId=CVE-2026-85880 (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [Errno 61] Connection refused\"))); no cached copy); affected products and fixed builds are unknown",
+    "counts": {},
+    "unresolved_validation_errors": [],
+    "needs_analyst_review": []
+  },
+  "assessments": [],
+  "coverage": null,
+  "external_lookups": [
+    {
+      "ref": "R1",
+      "tool": "lookup_vulnerability",
+      "args": {
+        "cve_id": "CVE-2026-85880"
+      },
+      "status": "error",
+      "source_mode": "live",
+      "error": "lookup failed after 2 attempts (ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=9): Max retries exceeded with url: /unreachable?cveId=CVE-2026-85880 (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [Errno 61] Connection refused\"))); no cached copy"
+    }
+  ],
+  "agent_activity": {
+    "tool_calls": 1,
+    "rejected_tool_calls": 0,
+    "submissions": 0,
+    "final_validation_errors": [],
+    "model_summary": null
+  },
+  "human_review": {
+    "status": "pending",
+    "reviewer": null,
+    "date": null,
+    "checklist": "docs/evidence_review.md"
+  }
+}
