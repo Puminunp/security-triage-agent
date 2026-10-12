@@ -185,9 +185,9 @@ def test_run_saves_all_artifacts(offline, tmp_path):
     for name in ("assessment.json", "report.md", "trace.jsonl", "config.json", "messages.json",
                  "tool_results.json"):
         assert (run_dir / name).exists(), name
-    saved = json.loads((run_dir / "assessment.json").read_text())
+    saved = json.loads((run_dir / "assessment.json").read_text(encoding="utf-8"))
     assert saved["intake"]["snapshot_sha256"] and saved["run"]["code_version"]
-    events = [json.loads(l)["event"] for l in (run_dir / "trace.jsonl").read_text().splitlines()]
+    events = [json.loads(l)["event"] for l in (run_dir / "trace.jsonl").read_text(encoding="utf-8").splitlines()]
     assert events[0] == "intake" and "validation" in events and "policy" in events
 
 

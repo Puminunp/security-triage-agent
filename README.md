@@ -129,7 +129,7 @@ CVSS describes technical severity; the rating describes local risk. The full pol
 - Versions and assumptions are simulated additions to a fictional scenario; real environments would need verified asset data.
 - The low-privilege access path on W15 (A15) is an assumption, which lowers confidence in the main result to Medium.
 - Severity uses CVSS v3.1 only. CVSS v4.0 and EPSS were not used.
-- The NVD and KEV inputs were first transcribed through a web-reading tool; the raw files must be saved before the baseline is frozen.
+- The NVD and KEV inputs were first transcribed through a web-reading tool. The raw files have since been saved and compared (`inputs/SOURCES.md`); no fact used by the policy differed.
 
 ### Contributions: Student A
 
