@@ -46,3 +46,38 @@ The two JSON files in this folder were **transcribed** from the NVD record using
 | Windows 10 22H2 fixed build | 10.0.19045.**7725** | T1 |
 | Windows 11 | Not listed as affected | T1 |
 | Attack prerequisite | Attacker already has low-privileged local code execution on the target | T1 (vector `AV:L/PR:L`) |
+
+## Raw vs transcribed comparison
+
+Added by Student B on 2026-10-11 (retrieved 2026-10-12T00:52Z). The raw files were saved by the tool clients in `src/sources/` and compared field by field with the transcribed files.
+
+| Raw file | Source | Source timestamp |
+|---|---|---|
+| `CVE-2026-85880_nvd_raw.json` | T1, full NVD API 2.0 response | `timestamp` 2026-10-12T00:52:05, record `lastModified` 2026-09-24T23:19:20 |
+| `CVE-2026-85880_kev_raw.json` | T2, the CVE's entry from the KEV JSON feed, unmodified | catalog version 2026.10.08, released 2026-10-08, 1,739 entries |
+
+Copies are also in `cache/` (`nvd_CVE-2026-85880.json` and the whole feed as `kev_feed.json`) for the lookup-failure fallback.
+
+**Result: no difference in any fact the policy uses.** CVSS score, vector and source, KEV dates, CWEs and every fixed build match. The raw files win where wording differs; none of the differences below changes `docs/rating_policy.md`, `docs/threat_prerequisites.md` or the expected results.
+
+### Fields that match
+
+NVD: CVE ID, source identifier, published, last modified, status (Analyzed), CVSS v3.1 source (`secure@microsoft.com`), type (Secondary), vector, base score 7.8, severity HIGH, exploitability 1.8, impact 5.9, CWE-122 and CWE-908, `cisaExploitAdd` 2026-09-08, `cisaActionDue` 2026-09-22, `cisaVulnerabilityName`, the MSRC reference and its tags, and `versionEndExcluding` for Windows 10 1607, 1809, 21H2, 22H2 and Windows Server 2016, 2019 and 2022. Windows 11 and Windows Server 2025 do not appear in the raw record, as transcribed.
+
+KEV: `cveID`, `vendorProject`, `product`, `vulnerabilityName`, `dateAdded` 2026-09-08, `dueDate` 2026-09-22.
+
+### Differences
+
+| # | Field | Transcribed | Raw | Effect on the policy |
+|---|---|---|---|---|
+| 1 | NVD description | "...in Windows Advanced Local Procedure Call (ALPC) allows..." | "...in Windows ALPC allows..." | None. Wording only; the transcription expanded the abbreviation |
+| 2 | NVD reference URL (CISA) | `...catalog?search_api_fulltext=CVE-2026-85880` | `...catalog?field_cve=CVE-2026-85880` | None. Same page, different query string |
+| 3 | NVD SSVC source | `CISA-ADP` | `134c704f-9b21-4f2e-91b3-4a467353bcc0` (UUID; role "CISA Coordinator") | None. Label for the same source; exploitation, automatable and technical impact values match. SSVC is not used by the policy |
+| 4 | NVD Windows Server 2012 / 2012 R2 fixed build | `fixed_build` 6.2.9200.26349 / 6.3.9600.23398 | Same numbers, but only in the vendor `affected` block (`lessThan`). The NVD CPE entries for 2012 and 2012 R2 have no `versionEndExcluding` | None for Northbridge (Windows Server 2012 is on the absences list). The NVD tool reports these two CPE rows with `versionEndExcluding: null` in `unknown_fields` and gives the vendor numbers separately under `cna_affected` |
+| 5 | NVD `cisaRequiredAction` | not transcribed | present, full text | None. Now available from the tool |
+| 6 | KEV `knownRansomwareCampaignUse` | `null` | `"Unknown"` | None. Not a policy input. The raw value is CISA's own "Unknown" |
+| 7 | KEV `requiredAction` | paraphrased as `requiredAction_paraphrase` | full CISA text | None. Raw text should be quoted in outputs |
+| 8 | KEV extra fields | absent | `shortDescription`, `notes`, `cwes` (CWE-122, CWE-908), `forensicTriage` ("No") | None. Extra context only |
+| 9 | Bookkeeping fields | `_note`, `source`, `retrieved_at`, `status: transcribed` | absent (the raw files are unmodified source data) | None |
+
+The transcribed files (`*_nvd_summary.json`, `*_kev_entry.json`) are kept for this record. Use the raw files, or the tools, as the source from now on.
