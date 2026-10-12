@@ -1,0 +1,18 @@
+# Project settings. No secrets here: API keys go in .env (see .env.example).
+# Relative paths are resolved from the repository root.
+
+environment_snapshot: environment/northbridge-v1.1.json
+
+nvd_base_url: https://services.nvd.nist.gov/rest/json/cves/2.0
+kev_url: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+
+cache_dir: cache
+
+timeouts:
+  nvd_seconds: 15
+  kev_seconds: 15
+
+# One retry after a failed external lookup, then fall back to the cache
+# (docs/rating_policy.md section 8).
+retries: 1
+retry_wait_seconds: 2

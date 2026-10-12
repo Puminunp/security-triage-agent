@@ -11,3 +11,4 @@ __pycache__/
 
 # Raw cached API responses (keep cache/ itself)
 cache/*.raw
+.pytest_cache/
