@@ -1,0 +1,314 @@
+[
+  {
+    "id": "0",
+    "name": "Main run",
+    "kind": "policy",
+    "expected": {
+      "id": "0",
+      "name": "Main run",
+      "snapshot": "environment/northbridge-v1.1.json",
+      "faults": [],
+      "applicability": "Confirmed",
+      "priority": "P1",
+      "decision": "High",
+      "rule": "P1 x High = High; KEV +1 -> High"
+    },
+    "actual": {
+      "applicability": "Confirmed",
+      "priority": "P1",
+      "decision": "High",
+      "rule": "P1 x High = High; KEV +1 -> High"
+    },
+    "pass": true,
+    "problems": [],
+    "run_dir": "outputs/checks_20261012T185021Z/20261012T185021Z_check0",
+    "attempts": [
+      {
+        "run_dir": "outputs/checks_20261012T185021Z/20261012T185021Z_check0",
+        "status": "completed",
+        "stop_reason": null
+      }
+    ]
+  },
+  {
+    "id": "0s",
+    "name": "Secondary scan (all assets, base snapshot)",
+    "kind": "scan",
+    "expected": {
+      "snapshot": "environment/northbridge-v1.1.json",
+      "non_low": {
+        "W15 FINLEG01-FINLEG02": "High",
+        "W02 CA-ROOT01": "Medium",
+        "E02 Legacy workstations (stale sensors)": "INSUFFICIENT_EVIDENCE"
+      },
+      "everything_else": "Low"
+    },
+    "actual": {
+      "W15 FINLEG01-FINLEG02": "High",
+      "W02 CA-ROOT01": "Medium",
+      "E02 Legacy workstations (stale sensors)": "INSUFFICIENT_EVIDENCE",
+      "Low": 20
+    },
+    "pass": true,
+    "problems": [],
+    "run_dir": "outputs/checks_20261012T185021Z/20261012T185021Z_check0"
+  },
+  {
+    "id": "1",
+    "name": "Applicability change",
+    "kind": "policy",
+    "expected": {
+      "id": "1",
+      "name": "Applicability change",
+      "snapshot": "environment/variants/env_patched.json",
+      "faults": [],
+      "applicability": "Not applicable",
+      "priority": "P1",
+      "decision": "Low",
+      "rule": "gate: not applicable -> Low"
+    },
+    "actual": {
+      "applicability": "Not applicable",
+      "priority": "P1",
+      "decision": "Low",
+      "rule": "gate: not applicable -> Low"
+    },
+    "pass": true,
+    "problems": [],
+    "run_dir": "outputs/checks_20261012T185021Z/20261012T185157Z_check1",
+    "attempts": [
+      {
+        "run_dir": "outputs/checks_20261012T185021Z/20261012T185157Z_check1",
+        "status": "completed",
+        "stop_reason": null
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "name": "Impact change",
+    "kind": "policy",
+    "expected": {
+      "id": "2",
+      "name": "Impact change",
+      "snapshot": "environment/variants/env_low_priority.json",
+      "faults": [],
+      "applicability": "Confirmed",
+      "priority": "P3",
+      "decision": "Medium",
+      "rule": "P3 x High = Low; KEV +1 -> Medium"
+    },
+    "actual": {
+      "applicability": "Confirmed",
+      "priority": "P3",
+      "decision": "Medium",
+      "rule": "P3 x High = Low; KEV +1 -> Medium"
+    },
+    "pass": true,
+    "problems": [],
+    "run_dir": "outputs/checks_20261012T185021Z/20261012T185239Z_check2",
+    "attempts": [
+      {
+        "run_dir": "outputs/checks_20261012T185021Z/20261012T185239Z_check2",
+        "status": "completed",
+        "stop_reason": null
+      }
+    ]
+  },
+  {
+    "id": "3a",
+    "name": "Missing evidence",
+    "kind": "policy",
+    "expected": {
+      "id": "3a",
+      "name": "Missing evidence",
+      "snapshot": "environment/variants/env_missing.json",
+      "faults": [],
+      "applicability": "Unknown",
+      "priority": "P1",
+      "decision": "INSUFFICIENT_EVIDENCE",
+      "rule": "decisive fact unknown -> review"
+    },
+    "actual": {
+      "applicability": "Unknown",
+      "priority": "P1",
+      "decision": "INSUFFICIENT_EVIDENCE",
+      "rule": "gate: decisive fact unknown or conflicting -> INSUFFICIENT_EVIDENCE (analyst review)"
+    },
+    "pass": true,
+    "problems": [],
+    "run_dir": "outputs/checks_20261012T185021Z/20261012T185331Z_check3a",
+    "attempts": [
+      {
+        "run_dir": "outputs/checks_20261012T185021Z/20261012T185331Z_check3a",
+        "status": "completed",
+        "stop_reason": null
+      }
+    ]
+  },
+  {
+    "id": "3b",
+    "name": "Conflicting evidence",
+    "kind": "policy",
+    "expected": {
+      "id": "3b",
+      "name": "Conflicting evidence",
+      "snapshot": "environment/variants/env_conflict.json",
+      "faults": [],
+      "applicability": "Conflict",
+      "priority": "P1",
+      "decision": "INSUFFICIENT_EVIDENCE",
+      "rule": "sources disagree -> review",
+      "must_name_sources": [
+        "S08",
+        "assets[17]"
+      ]
+    },
+    "actual": {
+      "applicability": "Conflict",
+      "priority": "P1",
+      "decision": "INSUFFICIENT_EVIDENCE",
+      "rule": "gate: decisive fact unknown or conflicting -> INSUFFICIENT_EVIDENCE (analyst review)",
+      "conflict": [
+        "S08 says 'W15: Windows Server 2016 build 10.0.14393.9512 (September 2026 update) per patch report dated 2026-09-30' but the asset record (env_conflict.json#assets[17]) says build 10.0.14393.9339"
+      ]
+    },
+    "pass": true,
+    "problems": [],
+    "run_dir": "outputs/checks_20261012T185021Z/20261012T185451Z_check3b",
+    "attempts": [
+      {
+        "run_dir": "outputs/checks_20261012T185021Z/20261012T185451Z_check3b",
+        "status": "completed",
+        "stop_reason": null
+      }
+    ]
+  },
+  {
+    "id": "4a",
+    "name": "NVD API unreachable, cache present",
+    "kind": "failure",
+    "expected": {
+      "id": "4a",
+      "name": "NVD API unreachable, cache present",
+      "snapshot": "environment/northbridge-v1.1.json",
+      "faults": [
+        "nvd-down"
+      ],
+      "run_status": "completed",
+      "nvd_status": "cached",
+      "decision": "High",
+      "confidence_at_most": "Medium"
+    },
+    "actual": {
+      "run_status": "completed",
+      "stop_reason": null,
+      "overall": "High",
+      "rejected_tool_calls": 0,
+      "lookups": [
+        [
+          "lookup_vulnerability",
+          "cached"
+        ],
+        [
+          "lookup_kev",
+          "live"
+        ]
+      ],
+      "decision": "High",
+      "confidence": "Medium"
+    },
+    "pass": true,
+    "problems": [],
+    "run_dir": "outputs/checks_20261012T185021Z/20261012T185534Z_check4a",
+    "attempts": [
+      {
+        "run_dir": "outputs/checks_20261012T185021Z/20261012T185534Z_check4a",
+        "status": "completed",
+        "stop_reason": null
+      }
+    ]
+  },
+  {
+    "id": "4b",
+    "name": "NVD API unreachable, no cache",
+    "kind": "failure",
+    "expected": {
+      "id": "4b",
+      "name": "NVD API unreachable, no cache",
+      "snapshot": "environment/northbridge-v1.1.json",
+      "faults": [
+        "nvd-down-no-cache"
+      ],
+      "run_status": "stopped_decisive_lookup_failed",
+      "overall": "INSUFFICIENT_EVIDENCE",
+      "stop_reason_contains": "lookup_vulnerability"
+    },
+    "actual": {
+      "run_status": "stopped_decisive_lookup_failed",
+      "stop_reason": "lookup_vulnerability failed (lookup failed after 2 attempts (ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=9): Max retries exceeded with url: /unreachable?cveId=CVE-2026-85880 (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [Errno 61] Connection refused\"))); no cached copy); affected products and fixed builds are unknown",
+      "overall": "INSUFFICIENT_EVIDENCE",
+      "rejected_tool_calls": 0,
+      "lookups": [
+        [
+          "lookup_vulnerability",
+          "error"
+        ]
+      ]
+    },
+    "pass": true,
+    "problems": [],
+    "run_dir": "outputs/checks_20261012T185021Z/20261012T185641Z_check4b",
+    "attempts": [
+      {
+        "run_dir": "outputs/checks_20261012T185021Z/20261012T185641Z_check4b",
+        "status": "stopped_decisive_lookup_failed",
+        "stop_reason": "lookup_vulnerability failed (lookup failed after 2 attempts (ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=9): Max retries exceeded with url: /unreachable?cveId=CVE-2026-85880 (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [Errno 61] Connection refused\"))); no cached copy); affected products and fixed builds are unknown"
+      }
+    ]
+  },
+  {
+    "id": "4c",
+    "name": "Model requests a tool that doesn't exist",
+    "kind": "failure",
+    "expected": {
+      "id": "4c",
+      "name": "Model requests a tool that doesn't exist",
+      "snapshot": "environment/northbridge-v1.1.json",
+      "faults": [
+        "bad-tool"
+      ],
+      "run_status": "completed",
+      "min_rejected": 1,
+      "decision": "High",
+      "note": "Live model: its first tool request is replaced by a call to scan_network (src/faults.py); the call is rejected and the model continues with valid tools. The 3-rejection stop is checked offline in tests/test_agent.py (scripted model)."
+    },
+    "actual": {
+      "run_status": "completed",
+      "stop_reason": null,
+      "overall": "High",
+      "rejected_tool_calls": 1,
+      "lookups": [
+        [
+          "lookup_vulnerability",
+          "live"
+        ],
+        [
+          "lookup_kev",
+          "live"
+        ]
+      ],
+      "decision": "High"
+    },
+    "pass": true,
+    "problems": [],
+    "run_dir": "outputs/checks_20261012T185021Z/20261012T185643Z_check4c",
+    "attempts": [
+      {
+        "run_dir": "outputs/checks_20261012T185021Z/20261012T185643Z_check4c",
+        "status": "completed",
+        "stop_reason": null
+      }
+    ]
+  }
+]

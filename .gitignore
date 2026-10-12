@@ -12,3 +12,6 @@ __pycache__/
 # Raw cached API responses (keep cache/ itself)
 cache/*.raw
 .pytest_cache/
+
+# Local development runs (final runs go to outputs/ and baseline/)
+scratch_runs/

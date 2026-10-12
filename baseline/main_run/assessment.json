@@ -1,0 +1,3409 @@
+{
+  "schema_version": "1.0",
+  "run": {
+    "run_id": "20261012T185021Z_check0",
+    "label": "check0",
+    "started_at": "2026-10-12T18:50:21Z",
+    "finished_at": "2026-10-12T18:51:57Z",
+    "status": "completed",
+    "stop_reason": null,
+    "faults": [],
+    "model": "gpt-oss:120b",
+    "prompt_version": "1.1",
+    "code_version": {
+      "commit": "860090785513dace0642dd033c87df5b0fd7b998",
+      "uncommitted_changes": false
+    }
+  },
+  "intake": {
+    "cve_id": "CVE-2026-85880",
+    "risk_question": "What is the risk that CVE-2026-85880 is exploited on Northbridge Services assets, given environment snapshot northbridge-v1.1 (as of 2026-10-01)?",
+    "snapshot_path": "environment/northbridge-v1.1.json",
+    "snapshot_file": "northbridge-v1.1.json",
+    "snapshot_id": "northbridge-v1.1",
+    "snapshot_date": "2026-10-01",
+    "snapshot_source_mode": "simulated",
+    "snapshot_sha256": "9d17ea840bd96ede94d2c3bb8c3ab0b413c40398a869e1d485857a2f07147f4a",
+    "variant_change": null
+  },
+  "threat": {
+    "cve_id": "CVE-2026-85880",
+    "description": "Heap-based buffer overflow in Windows ALPC allows an authorized attacker to elevate privileges locally.",
+    "published": "2026-09-08T18:21:14.087",
+    "cwe": [
+      "CWE-122",
+      "CWE-908"
+    ],
+    "cvss_v31": {
+      "base_score": 7.8,
+      "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+      "score_source": "secure@microsoft.com",
+      "score_type": "cna_secondary"
+    },
+    "kev": {
+      "in_kev": true,
+      "source": "T2 lookup_kev",
+      "date_added": "2026-09-08",
+      "due_date": "2026-09-22",
+      "required_action": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+      "known_ransomware_use": "Unknown",
+      "note": "absence from KEV does not establish safety"
+    },
+    "severity_note": "CVSS is the flaw's technical severity in general; the decision per asset is local risk from the applicability-and-impact policy.",
+    "sources": [
+      {
+        "ref": "R1",
+        "source_id": "T1",
+        "tool": "lookup_vulnerability",
+        "args": {
+          "cve_id": "CVE-2026-85880"
+        },
+        "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+        "retrieved_at": "2026-10-12T18:50:22Z",
+        "status": "live",
+        "source_mode": "live",
+        "fact": "description, CVSS v3.1, affected products, fixed builds"
+      },
+      {
+        "ref": "R2",
+        "source_id": "T2",
+        "tool": "lookup_kev",
+        "args": {
+          "cve_id": "CVE-2026-85880"
+        },
+        "source": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+        "retrieved_at": "2026-10-12T18:50:23Z",
+        "status": "live",
+        "source_mode": "live",
+        "fact": "KEV listing, dateAdded, dueDate, requiredAction"
+      }
+    ]
+  },
+  "overall": {
+    "decision": "High",
+    "note": "Highest per-asset decision across 23 assessed asset records.",
+    "counts": {
+      "High": 1,
+      "Medium": 1,
+      "INSUFFICIENT_EVIDENCE": 1,
+      "Low": 20
+    },
+    "unresolved_validation_errors": [],
+    "needs_analyst_review": [
+      "E02 Legacy workstations (stale sensors)"
+    ]
+  },
+  "assessments": [
+    {
+      "asset": {
+        "asset_id": "W15",
+        "instance": "FINLEG01-FINLEG02",
+        "count": 2,
+        "role": "Legacy finance application servers",
+        "zone": "LEGACY",
+        "locator": "northbridge-v1.1.json#assets[17]",
+        "source_mode": "simulated"
+      },
+      "decision": "High",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Confirmed",
+          "reason": "vulnerable build 10.0.14393.9339 < 10.0.14393.9512 and low-privilege local access exists",
+          "facts": {
+            "os": "Windows Server 2016 1607",
+            "os_build": "10.0.14393.9339",
+            "affected_product": "windows_server_2016",
+            "fixed_build": "10.0.14393.9512",
+            "low_priv_local_access": true,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P1",
+          "reason": "matrix: pii_unprotected x intranet",
+          "data_classification": "restricted_pii",
+          "data_protection": "unprotected",
+          "exposure": "intranet",
+          "priority_override": null,
+          "business_service": "payroll_legacy_finance"
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": "+1",
+          "partial": null
+        },
+        "policy_rule": "P1 x High = High; KEV +1 -> High",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R3",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "query": "Windows Server 2016",
+            "limit": 20
+          },
+          "source": "northbridge-v1.1.json#assets[17]",
+          "retrieved_at": "2026-10-12T18:50:24Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2016 build 10.0.14393.9339, low_priv_local_access=True, data=restricted_pii/unprotected, exposure=intranet"
+        },
+        {
+          "ref": "R8",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S03"
+          },
+          "source": "northbridge-v1.1.json#evidence[2]",
+          "retrieved_at": "2026-10-12T18:50:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Control and exception register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S03"
+        },
+        {
+          "ref": "R9",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S05"
+          },
+          "source": "northbridge-v1.1.json#evidence[4]",
+          "retrieved_at": "2026-10-12T18:50:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Business impact and recovery worksheet (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S05"
+        },
+        {
+          "ref": "R11",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S07"
+          },
+          "source": "northbridge-v1.1.json#evidence[6]",
+          "retrieved_at": "2026-10-12T18:51:30Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: assumptions A1-A15 (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S07"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2016: listed; fixed build 10.0.14393.9512"
+        },
+        {
+          "ref": "R2",
+          "source_id": "T2",
+          "tool": "lookup_kev",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+          "retrieved_at": "2026-10-12T18:50:23Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "CVE listed in CISA KEV"
+        }
+      ],
+      "assumptions": [
+        "A6 (S07): W15 is reachable from the USERS zone (flow F07), so its exposure is \"intranet\"",
+        "A15 (S07): Payroll operators (non-administrators) log on to W15 to run exports, and the NTLM service account `svc_finlegacy` runs there, so a low-privilege local access path exists"
+      ],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "priority_override",
+          "config.encryption_at_rest"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S07, S08",
+        "decisive_sources": [
+          "T1",
+          "S08",
+          "T2",
+          "S07"
+        ]
+      },
+      "action": {
+        "recommended_action": "1) Deploy the Microsoft security update to bring the OS to build 10.0.14393.9512 or later. 2) Review and restrict NTLM usage, especially for the svc_finlegacy account, and enforce stronger password rotation (service account password age). 3) Verify that the patch approval was recorded at least 60 days before the snapshot and document compliance with CISA BOD 26‑04. Note: the federal KEV due date of 2026‑09‑22 has already passed.",
+        "would_change_decision": "Evidence that the system has been upgraded to build ≥ 10.0.14393.9512 (or that low‑privilege local access has been eliminated) would resolve the High rating.",
+        "drafted_by": "model (rating fixed by policy code)"
+      },
+      "model_notes": "Evidence S03, S05, S07, S08 reviewed; no conflicting build info.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W02",
+        "instance": "CA-ROOT01",
+        "count": 1,
+        "role": "Offline standalone root CA",
+        "zone": "IDENTITY",
+        "locator": "northbridge-v1.1.json#assets[2]",
+        "source_mode": "simulated"
+      },
+      "decision": "Medium",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Partial",
+          "reason": "vulnerable build 10.0.20348.5256 < 10.0.20348.5622, but no low-privilege local access path (exposure=isolated, low_priv_local_access=False)",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5256",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P1",
+          "reason": "override: Tier-0 identity",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "isolated",
+          "priority_override": "Tier-0 identity",
+          "business_service": "identity"
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": "+1",
+          "partial": "-1"
+        },
+        "policy_rule": "P1 x High = High; KEV +1 -> High; Partial -1 -> Medium",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[2]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5256, low_priv_local_access=False, data=none/n/a, exposure=isolated"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R11",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S07"
+          },
+          "source": "northbridge-v1.1.json#evidence[6]",
+          "retrieved_at": "2026-10-12T18:51:30Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: assumptions A1-A15 (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S07"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        },
+        {
+          "ref": "R2",
+          "source_id": "T2",
+          "tool": "lookup_kev",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+          "retrieved_at": "2026-10-12T18:50:23Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "CVE listed in CISA KEV"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": []
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S07, S08",
+        "decisive_sources": [
+          "T1",
+          "S08",
+          "T2",
+          "S07"
+        ]
+      },
+      "action": {
+        "recommended_action": "1) Apply the update to upgrade the root CA to build 10.0.20348.5622. 2) Confirm the CA remains isolated with no low‑privilege local access paths and that it stays offline when not in use. 3) Record the patch approval and ensure the action aligns with CISA BOD 26‑04 guidance. Note: the federal KEV due date of 2026‑09‑22 has already passed.",
+        "would_change_decision": "Discovery of a low‑privilege local access path would raise the rating to High; conversely, evidence that the system is fully patched to the fixed build would lower the rating.",
+        "drafted_by": "model (rating fixed by policy code)"
+      },
+      "model_notes": "Evidence S01, S07, S08 reviewed; build older than fixed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "E02",
+        "instance": "Legacy workstations (stale sensors)",
+        "count": 12,
+        "role": "Legacy Windows 10 (ESU)",
+        "zone": "LEGACY",
+        "locator": "northbridge-v1.1.json#assets[27]",
+        "source_mode": "simulated"
+      },
+      "decision": "INSUFFICIENT_EVIDENCE",
+      "status": "needs_analyst_review",
+      "rationale": {
+        "applicability": {
+          "level": "Unknown",
+          "reason": "OS build unknown (decisive)",
+          "facts": {
+            "os": "Windows 10 Enterprise 22H2",
+            "os_build": null,
+            "affected_product": "windows_10_22h2",
+            "fixed_build": "10.0.19045.7725",
+            "low_priv_local_access": true,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P3",
+          "reason": "matrix: no_pii x intranet",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "intranet",
+          "priority_override": null,
+          "business_service": null
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: decisive fact unknown or conflicting -> INSUFFICIENT_EVIDENCE (analyst review)",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R7",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows 10"
+          },
+          "source": "northbridge-v1.1.json#assets[27]",
+          "retrieved_at": "2026-10-12T18:50:27Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows 10 Enterprise build None, low_priv_local_access=True, data=none/n/a, exposure=intranet"
+        },
+        {
+          "ref": "R8",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S03"
+          },
+          "source": "northbridge-v1.1.json#evidence[2]",
+          "retrieved_at": "2026-10-12T18:50:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Control and exception register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S03"
+        },
+        {
+          "ref": "R15",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S04"
+          },
+          "source": "northbridge-v1.1.json#evidence[3]",
+          "retrieved_at": "2026-10-12T18:51:46Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Telemetry coverage summary (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S04"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_10_22h2: listed; fixed build 10.0.19045.7725"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [
+          "os.build"
+        ],
+        "non_decisive": [
+          "os.last_cumulative_update",
+          "os.last_update_kb",
+          "priority_override",
+          "business_service"
+        ]
+      },
+      "confidence": {
+        "level": null,
+        "reason": "no rating, so no confidence level; see the applicability reason",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "1) Retrieve the current Windows 10 Enterprise build number from the legacy workstations. 2) Compare the build to the fixed version 10.0.19045.7725 to determine vulnerability status. 3) Verify whether low‑privilege local users have access to the machines. Note: the federal KEV due date of 2026‑09‑22 has already passed.",
+        "would_change_decision": "Obtaining the actual OS build number (and its comparison to the fixed build) would resolve the INSUFFICIENT_EVIDENCE decision.",
+        "drafted_by": "model (rating fixed by policy code)"
+      },
+      "model_notes": "Evidence S03, S04, S08 reviewed; build unknown.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "E02",
+        "instance": "Legacy workstations (sensors healthy)",
+        "count": 28,
+        "role": "Legacy Windows 10 (ESU)",
+        "zone": "LEGACY",
+        "locator": "northbridge-v1.1.json#assets[26]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.19045.7725 >= fixed 10.0.19045.7725",
+          "facts": {
+            "os": "Windows 10 Enterprise 22H2",
+            "os_build": "10.0.19045.7725",
+            "affected_product": "windows_10_22h2",
+            "fixed_build": "10.0.19045.7725",
+            "low_priv_local_access": true,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P3",
+          "reason": "matrix: no_pii x intranet",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "intranet",
+          "priority_override": null,
+          "business_service": null
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R7",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows 10"
+          },
+          "source": "northbridge-v1.1.json#assets[26]",
+          "retrieved_at": "2026-10-12T18:50:27Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows 10 Enterprise build 10.0.19045.7725, low_priv_local_access=True, data=none/n/a, exposure=intranet"
+        },
+        {
+          "ref": "R8",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S03"
+          },
+          "source": "northbridge-v1.1.json#evidence[2]",
+          "retrieved_at": "2026-10-12T18:50:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Control and exception register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S03"
+        },
+        {
+          "ref": "R15",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S04"
+          },
+          "source": "northbridge-v1.1.json#evidence[3]",
+          "retrieved_at": "2026-10-12T18:51:46Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Telemetry coverage summary (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S04"
+        },
+        {
+          "ref": "R11",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S07"
+          },
+          "source": "northbridge-v1.1.json#evidence[6]",
+          "retrieved_at": "2026-10-12T18:51:30Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: assumptions A1-A15 (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S07"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_10_22h2: listed; fixed build 10.0.19045.7725"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "priority_override",
+          "business_service"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.19045.7725 is at or above the fixed build 10.0.19045.7725. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S03, S04, S07, S08 reviewed; build equals fixed version.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W01",
+        "instance": "DC01-DC04",
+        "count": 4,
+        "role": "Domain controllers",
+        "zone": "IDENTITY",
+        "locator": "northbridge-v1.1.json#assets[0]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P1",
+          "reason": "override: Tier-0 identity",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "internal_only",
+          "priority_override": "Tier-0 identity",
+          "business_service": "identity"
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[0]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=internal_only"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R14",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S02"
+          },
+          "source": "northbridge-v1.1.json#evidence[1]",
+          "retrieved_at": "2026-10-12T18:51:35Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Network design and reviewed access policy (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S02"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": []
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S01, S02, S08 reviewed; build matches fixed version.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W02",
+        "instance": "CA-ISSUING01",
+        "count": 1,
+        "role": "Enterprise issuing CA",
+        "zone": "IDENTITY",
+        "locator": "northbridge-v1.1.json#assets[1]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P1",
+          "reason": "override: Tier-0 identity",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "internal_only",
+          "priority_override": "Tier-0 identity",
+          "business_service": "identity"
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[1]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=internal_only"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": []
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S01, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W03",
+        "instance": "SYNC01-SYNC02",
+        "count": 2,
+        "role": "Directory sync (active + staging)",
+        "zone": "IDENTITY",
+        "locator": "northbridge-v1.1.json#assets[3]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P1",
+          "reason": "override: Tier-0 identity",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "internal_only",
+          "priority_override": "Tier-0 identity",
+          "business_service": "identity"
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[3]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=internal_only"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": []
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S01, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W04",
+        "instance": "DHCP01-DHCP02",
+        "count": 2,
+        "role": "DHCP servers",
+        "zone": "IDENTITY",
+        "locator": "northbridge-v1.1.json#assets[4]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P3",
+          "reason": "matrix: no_pii x intranet",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "intranet",
+          "priority_override": null,
+          "business_service": null
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[4]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=intranet"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "priority_override",
+          "business_service"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S01, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W05",
+        "instance": "FILE01-FILE03",
+        "count": 3,
+        "role": "File servers (general departmental shares)",
+        "zone": "APPS",
+        "locator": "northbridge-v1.1.json#assets[5]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P3",
+          "reason": "matrix: no_pii x intranet",
+          "data_classification": "general",
+          "data_protection": "n/a",
+          "exposure": "intranet",
+          "priority_override": null,
+          "business_service": "collaboration_files"
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[5]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=general/n/a, exposure=intranet"
+        },
+        {
+          "ref": "R8",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S03"
+          },
+          "source": "northbridge-v1.1.json#evidence[2]",
+          "retrieved_at": "2026-10-12T18:50:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Control and exception register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S03"
+        },
+        {
+          "ref": "R11",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S07"
+          },
+          "source": "northbridge-v1.1.json#evidence[6]",
+          "retrieved_at": "2026-10-12T18:51:30Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: assumptions A1-A15 (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S07"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [
+        "A1 (S07): The Finance and HR shares are on FILE04; FILE01–03 hold general departmental shares only",
+        "A2 (S07): Share access is limited by AD groups (stated), but encryption at rest and access logging are undocumented, so FILE04 is \"unprotected\""
+      ],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "priority_override"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S03, S07, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W05",
+        "instance": "FILE04",
+        "count": 1,
+        "role": "File server (Finance and HR shares)",
+        "zone": "APPS",
+        "locator": "northbridge-v1.1.json#assets[6]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P1",
+          "reason": "matrix: pii_unprotected x intranet",
+          "data_classification": "restricted_pii",
+          "data_protection": "unprotected",
+          "exposure": "intranet",
+          "priority_override": null,
+          "business_service": "payroll_legacy_finance"
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[6]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=restricted_pii/unprotected, exposure=intranet"
+        },
+        {
+          "ref": "R8",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S03"
+          },
+          "source": "northbridge-v1.1.json#evidence[2]",
+          "retrieved_at": "2026-10-12T18:50:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Control and exception register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S03"
+        },
+        {
+          "ref": "R11",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S07"
+          },
+          "source": "northbridge-v1.1.json#evidence[6]",
+          "retrieved_at": "2026-10-12T18:51:30Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: assumptions A1-A15 (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S07"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [
+        "A1 (S07): The Finance and HR shares are on FILE04; FILE01–03 hold general departmental shares only",
+        "A2 (S07): Share access is limited by AD groups (stated), but encryption at rest and access logging are undocumented, so FILE04 is \"unprotected\""
+      ],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "priority_override",
+          "config.encryption_at_rest",
+          "config.access_logging"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S03, S07, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W06",
+        "instance": "PRINT01-PRINT02",
+        "count": 2,
+        "role": "Print servers",
+        "zone": "APPS",
+        "locator": "northbridge-v1.1.json#assets[7]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P3",
+          "reason": "matrix: no_pii x intranet",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "intranet",
+          "priority_override": null,
+          "business_service": null
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[7]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=intranet"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R11",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S07"
+          },
+          "source": "northbridge-v1.1.json#evidence[6]",
+          "retrieved_at": "2026-10-12T18:51:30Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: assumptions A1-A15 (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S07"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [
+        "A3 (S07): Print servers do not keep print jobs after printing"
+      ],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "priority_override",
+          "business_service"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S01, S07, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W07",
+        "instance": "CM01, CMDP01",
+        "count": 2,
+        "role": "Configuration Manager",
+        "zone": "MGMT",
+        "locator": "northbridge-v1.1.json#assets[8]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P1",
+          "reason": "override: Control plane or remote-access gateway",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "internal_only",
+          "priority_override": "Control plane or remote-access gateway",
+          "business_service": null
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[8]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=internal_only"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "business_service"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S01, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W08",
+        "instance": "JUMP01-JUMP02",
+        "count": 2,
+        "role": "Administrative jump hosts",
+        "zone": "MGMT",
+        "locator": "northbridge-v1.1.json#assets[9]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P1",
+          "reason": "override: Control plane or remote-access gateway",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "internal_only",
+          "priority_override": "Control plane or remote-access gateway",
+          "business_service": null
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[9]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=internal_only"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "business_service"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S01, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W09",
+        "instance": "BKP01-BKP02",
+        "count": 2,
+        "role": "Backup management",
+        "zone": "BACKUP",
+        "locator": "northbridge-v1.1.json#assets[10]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P1",
+          "reason": "override: Control plane or remote-access gateway",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "internal_only",
+          "priority_override": "Control plane or remote-access gateway",
+          "business_service": "recovery_infrastructure"
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[10]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=internal_only"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": []
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S01, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W10",
+        "instance": "RDS01-RDS04",
+        "count": 4,
+        "role": "Remote Desktop Services hosts",
+        "zone": "APPS",
+        "locator": "northbridge-v1.1.json#assets[11]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": true,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P3",
+          "reason": "matrix: no_pii x intranet",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "intranet",
+          "priority_override": null,
+          "business_service": null
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[11]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=True, data=none/n/a, exposure=intranet"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R11",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S07"
+          },
+          "source": "northbridge-v1.1.json#evidence[6]",
+          "retrieved_at": "2026-10-12T18:51:30Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: assumptions A1-A15 (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S07"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [
+        "A4 (S07): RDS hosts deliver applications but store no PII locally"
+      ],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "priority_override",
+          "business_service"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S01, S07, S08 reviewed; low_priv_local_access true.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W11",
+        "instance": "ERP01-ERP04",
+        "count": 4,
+        "role": "ERP application servers (2 prod, 2 test)",
+        "zone": "APPS",
+        "locator": "northbridge-v1.1.json#assets[12]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P1",
+          "reason": "override: Service with 4-hour RTO",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "intranet",
+          "priority_override": "Service with 4-hour RTO",
+          "business_service": "erp_orders"
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[12]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=intranet"
+        },
+        {
+          "ref": "R9",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S05"
+          },
+          "source": "northbridge-v1.1.json#evidence[4]",
+          "retrieved_at": "2026-10-12T18:50:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Business impact and recovery worksheet (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S05"
+        },
+        {
+          "ref": "R11",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S07"
+          },
+          "source": "northbridge-v1.1.json#evidence[6]",
+          "retrieved_at": "2026-10-12T18:51:30Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: assumptions A1-A15 (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S07"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": []
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S05, S07, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W12",
+        "instance": "SQL01-SQL04",
+        "count": 4,
+        "role": "Production SQL (2 availability groups)",
+        "zone": "DATA",
+        "locator": "northbridge-v1.1.json#assets[13]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P1",
+          "reason": "override: Service with 4-hour RTO",
+          "data_classification": "restricted_pii",
+          "data_protection": "unprotected",
+          "exposure": "internal_only",
+          "priority_override": "Service with 4-hour RTO",
+          "business_service": "erp_orders"
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[13]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=restricted_pii/unprotected, exposure=internal_only"
+        },
+        {
+          "ref": "R9",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S05"
+          },
+          "source": "northbridge-v1.1.json#evidence[4]",
+          "retrieved_at": "2026-10-12T18:50:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Business impact and recovery worksheet (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S05"
+        },
+        {
+          "ref": "R11",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S07"
+          },
+          "source": "northbridge-v1.1.json#evidence[6]",
+          "retrieved_at": "2026-10-12T18:51:30Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: assumptions A1-A15 (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S07"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "config.tde_enabled"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S05, S07, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W13",
+        "instance": "INTRA01-INTRA02",
+        "count": 2,
+        "role": "Intranet servers",
+        "zone": "APPS",
+        "locator": "northbridge-v1.1.json#assets[15]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P3",
+          "reason": "matrix: no_pii x intranet",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "intranet",
+          "priority_override": null,
+          "business_service": null
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[15]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=intranet"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [
+        "A5 (S07): Portal backends count as internet-exposed indirectly, through the WAF and reverse proxy. The scenario notes that front-end exposure does not prove direct backend exposure; we chose the cautious reading"
+      ],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "priority_override",
+          "business_service"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S01, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W13",
+        "instance": "PORTAL01-PORTAL02",
+        "count": 2,
+        "role": "Customer portal backends",
+        "zone": "APPS",
+        "locator": "northbridge-v1.1.json#assets[14]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P1",
+          "reason": "matrix: pii_unprotected x internet",
+          "data_classification": "pii",
+          "data_protection": "unprotected",
+          "exposure": "internet",
+          "priority_override": null,
+          "business_service": "customer_portal"
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[14]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=pii/unprotected, exposure=internet"
+        },
+        {
+          "ref": "R14",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S02"
+          },
+          "source": "northbridge-v1.1.json#evidence[1]",
+          "retrieved_at": "2026-10-12T18:51:35Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Network design and reviewed access policy (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S02"
+        },
+        {
+          "ref": "R11",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S07"
+          },
+          "source": "northbridge-v1.1.json#evidence[6]",
+          "retrieved_at": "2026-10-12T18:51:30Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: assumptions A1-A15 (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S07"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [
+        "A5 (S07): Portal backends count as internet-exposed indirectly, through the WAF and reverse proxy. The scenario notes that front-end exposure does not prove direct backend exposure; we chose the cautious reading"
+      ],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "priority_override"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S02, S07, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W14",
+        "instance": "MSQL01-MSQL02",
+        "count": 2,
+        "role": "Management SQL",
+        "zone": "MGMT",
+        "locator": "northbridge-v1.1.json#assets[16]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P3",
+          "reason": "matrix: no_pii x internal_only",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "internal_only",
+          "priority_override": null,
+          "business_service": null
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[16]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=internal_only"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "priority_override",
+          "business_service"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S01, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W16",
+        "instance": "UTIL01-UTIL06",
+        "count": 6,
+        "role": "Utility servers (license, batch, integration)",
+        "zone": "APPS",
+        "locator": "northbridge-v1.1.json#assets[18]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P3",
+          "reason": "matrix: no_pii x internal_only",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "internal_only",
+          "priority_override": null,
+          "business_service": null
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[18]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=internal_only"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R11",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S07"
+          },
+          "source": "northbridge-v1.1.json#evidence[6]",
+          "retrieved_at": "2026-10-12T18:51:30Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: assumptions A1-A15 (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S07"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [
+        "A7 (S07): Integration and batch hosts pass data through without storing it"
+      ],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "priority_override",
+          "business_service"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S01, S07, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W17",
+        "instance": "DEPLOY01-DEPLOY02",
+        "count": 2,
+        "role": "Deployment servers",
+        "zone": "MGMT",
+        "locator": "northbridge-v1.1.json#assets[19]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P3",
+          "reason": "matrix: no_pii x internal_only",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "internal_only",
+          "priority_override": null,
+          "business_service": null
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[19]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=internal_only"
+        },
+        {
+          "ref": "R13",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S01"
+          },
+          "source": "northbridge-v1.1.json#evidence[0]",
+          "retrieved_at": "2026-10-12T18:51:34Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Asset register (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S01"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "priority_override",
+          "business_service"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S01, S08 reviewed.",
+      "validation_errors": []
+    },
+    {
+      "asset": {
+        "asset_id": "W18",
+        "instance": "MON01-MON02",
+        "count": 2,
+        "role": "Monitoring and log collectors",
+        "zone": "MGMT",
+        "locator": "northbridge-v1.1.json#assets[20]",
+        "source_mode": "simulated"
+      },
+      "decision": "Low",
+      "status": "rated",
+      "rationale": {
+        "applicability": {
+          "level": "Not applicable",
+          "reason": "build 10.0.20348.5622 >= fixed 10.0.20348.5622",
+          "facts": {
+            "os": "Windows Server 2022 21H2",
+            "os_build": "10.0.20348.5622",
+            "affected_product": "windows_server_2022",
+            "fixed_build": "10.0.20348.5622",
+            "low_priv_local_access": false,
+            "conflicts": []
+          }
+        },
+        "impact": {
+          "priority": "P3",
+          "reason": "matrix: no_pii x internal_only",
+          "data_classification": "none",
+          "data_protection": "n/a",
+          "exposure": "internal_only",
+          "priority_override": null,
+          "business_service": null
+        },
+        "severity": {
+          "band": "High"
+        },
+        "modifiers": {
+          "kev": null,
+          "partial": null
+        },
+        "policy_rule": "gate: not applicable -> Low",
+        "policy": "docs/rating_policy.md v1.0 (applied by src/policy.py, not by the model)"
+      },
+      "evidence": [
+        {
+          "ref": "R10",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "search_assets",
+            "limit": 20,
+            "query": "Windows Server 2022"
+          },
+          "source": "northbridge-v1.1.json#assets[20]",
+          "retrieved_at": "2026-10-12T18:51:29Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "asset record: OS Windows Server 2022 build 10.0.20348.5622, low_priv_local_access=False, data=none/n/a, exposure=internal_only"
+        },
+        {
+          "ref": "R15",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S04"
+          },
+          "source": "northbridge-v1.1.json#evidence[3]",
+          "retrieved_at": "2026-10-12T18:51:46Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Telemetry coverage summary (course scenario v1.0, 2026-10-01)",
+          "evidence_id": "S04"
+        },
+        {
+          "ref": "R11",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S07"
+          },
+          "source": "northbridge-v1.1.json#evidence[6]",
+          "retrieved_at": "2026-10-12T18:51:30Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: assumptions A1-A15 (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S07"
+        },
+        {
+          "ref": "R12",
+          "source_id": null,
+          "tool": "lookup_environment",
+          "args": {
+            "action": "get_evidence",
+            "query": "S08"
+          },
+          "source": "northbridge-v1.1.json#evidence[7]",
+          "retrieved_at": "2026-10-12T18:51:31Z",
+          "status": "ok",
+          "source_mode": "simulated",
+          "fact": "Group scenario adaptation: version and patch data (added by group (simulated), 2026-10-11)",
+          "evidence_id": "S08"
+        },
+        {
+          "ref": "R1",
+          "source_id": "T1",
+          "tool": "lookup_vulnerability",
+          "args": {
+            "cve_id": "CVE-2026-85880"
+          },
+          "source": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880",
+          "retrieved_at": "2026-10-12T18:50:22Z",
+          "status": "live",
+          "source_mode": "live",
+          "fact": "affected product windows_server_2022: listed; fixed build 10.0.20348.5622"
+        }
+      ],
+      "assumptions": [
+        "A8 (S07): Logs (usernames, IP addresses) are not treated as PII in this policy"
+      ],
+      "unknowns": {
+        "decisive": [],
+        "non_decisive": [
+          "priority_override",
+          "business_service"
+        ]
+      },
+      "confidence": {
+        "level": "Medium",
+        "reason": "decisive facts rely on group-simulated evidence S08",
+        "decisive_sources": [
+          "T1",
+          "S08"
+        ]
+      },
+      "action": {
+        "recommended_action": "No action for this CVE: build 10.0.20348.5622 is at or above the fixed build 10.0.20348.5622. Keep the normal monthly patch cadence.",
+        "would_change_decision": "A patch report showing a build below the fixed build.",
+        "drafted_by": "template"
+      },
+      "model_notes": "Evidence S04, S07, S08 reviewed; build matches fixed version.",
+      "validation_errors": []
+    }
+  ],
+  "coverage": {
+    "nvd_available": true,
+    "products": [
+      {
+        "product": "windows_10_1607",
+        "checked_by": [
+          "R7 search_assets('Windows 10')"
+        ]
+      },
+      {
+        "product": "windows_10_1809",
+        "checked_by": [
+          "R7 search_assets('Windows 10')"
+        ]
+      },
+      {
+        "product": "windows_10_21h2",
+        "checked_by": [
+          "R7 search_assets('Windows 10')"
+        ]
+      },
+      {
+        "product": "windows_10_22h2",
+        "checked_by": [
+          "R7 search_assets('Windows 10')"
+        ]
+      },
+      {
+        "product": "windows_server_2012",
+        "checked_by": [
+          "R4 search_assets('Windows Server 2012')"
+        ]
+      },
+      {
+        "product": "windows_server_2012 r2",
+        "checked_by": [
+          "R4 search_assets('Windows Server 2012')"
+        ]
+      },
+      {
+        "product": "windows_server_2016",
+        "checked_by": [
+          "R3 search_assets('Windows Server 2016')"
+        ]
+      },
+      {
+        "product": "windows_server_2019",
+        "checked_by": [
+          "R6 search_assets('Windows Server 2019')"
+        ]
+      },
+      {
+        "product": "windows_server_2022",
+        "checked_by": [
+          "R10 search_assets('Windows Server 2022')"
+        ]
+      }
+    ]
+  },
+  "external_lookups": [
+    {
+      "ref": "R1",
+      "tool": "lookup_vulnerability",
+      "args": {
+        "cve_id": "CVE-2026-85880"
+      },
+      "status": "live",
+      "source_mode": "live",
+      "error": null
+    },
+    {
+      "ref": "R2",
+      "tool": "lookup_kev",
+      "args": {
+        "cve_id": "CVE-2026-85880"
+      },
+      "status": "live",
+      "source_mode": "live",
+      "error": null
+    }
+  ],
+  "agent_activity": {
+    "tool_calls": 15,
+    "rejected_tool_calls": 1,
+    "submissions": 2,
+    "final_validation_errors": [],
+    "model_summary": "Identified all assets running products affected by CVE-2026-85880, recorded fixed build versions, and evaluated whether each asset's build is below the fixed version. Low‑privileged local access is present on relevant assets."
+  },
+  "human_review": {
+    "status": "pending",
+    "reviewer": null,
+    "date": null,
+    "checklist": "docs/evidence_review.md"
+  }
+}
