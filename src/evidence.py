@@ -111,3 +111,35 @@ class Ledger:
 
     def real_locator(self, blinded_locator):
         return blinded_locator.replace(BLIND_FILE, self.snapshot_filename, 1)
+
+
+def preview(tool, args, result):
+    """One-line summary of a tool result, for the trace and the demo viewer."""
+    status = result.get("status")
+    if status == "error":
+        return f"error: {result.get('error')}"
+    data = result.get("data") or {}
+    if tool == "lookup_vulnerability":
+        cvss = data.get("cvss_v31") or {}
+        rows = data.get("affected_products") or []
+        return (f"{status}: CVSS {cvss.get('base_score')} ({cvss.get('score_used')}), "
+                f"{len({r.get('product') for r in rows})} affected products, "
+                f"KEV fields in_kev={(data.get('kev') or {}).get('in_kev')}")
+    if tool == "lookup_kev":
+        e = data.get("entry") or {}
+        return (f"{status}: in_kev={data.get('in_kev')}"
+                + (f", added {e.get('dateAdded')}, due {e.get('dueDate')}" if e else ""))
+    action = (args or {}).get("action")
+    if data.get("matches") is not None:
+        ms = data["matches"]
+        names = ", ".join(f"{m['asset'].get('asset_id')} {m['asset'].get('instance')} "
+                          f"(build {(m['asset'].get('os') or {}).get('build')})" for m in ms[:4])
+        more = f" +{len(ms) - 4} more" if len(ms) > 4 else ""
+        return f"{status}: {data.get('total_matches', len(ms))} match(es): {names}{more}" if ms else \
+            f"{status}: no match (does not prove absence)"
+    if action == "get_evidence" and data.get("evidence"):
+        ev = data["evidence"]
+        return f"{status}: {ev.get('evidence_id')} {ev.get('title')}"
+    if action == "check_absence":
+        return f"{status}: absent={data.get('absent')}"
+    return f"{status}"
