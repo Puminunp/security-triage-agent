@@ -42,12 +42,25 @@ baseline/      Frozen Assignment 3 baseline for Assignment 4 (inputs, config, co
 
 Tested with Python 3.13.5 on macOS (3.10 or later should work). Dependencies are pinned in `requirements.txt`: requests 2.32.3, PyYAML 6.0.2, python-dotenv 1.1.0, pytest 8.3.4. No agent framework is used.
 
+macOS or Linux:
+
 ```
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env        # then put your Ollama Cloud key in OLLAMA_API_KEY
+cp .env.example .env
 ```
+
+Windows (PowerShell):
+
+```
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+Copy-Item .env.example .env
+```
+
+Then open `.env` and put your Ollama Cloud key in `OLLAMA_API_KEY`. Create a key at https://ollama.com/settings/keys (free account). The agent needs this key; the tests do not.
 
 `.env` is ignored by git and must never be committed. `NVD_API_KEY` is optional: the NVD lookup works without it at a lower rate limit.
 
