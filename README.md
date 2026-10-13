@@ -13,6 +13,8 @@ An agentic cyber threat intelligence (CTI) risk-triage system that rates a CVE a
 
 Both members: consensus rating, review of the final assessment and its citations, video demo.
 
+The work was split into four roles, A to D, shared between the two members. Sections below are labeled by role. Some project documents refer to the same roles as "Student A" to "Student D".
+
 ## Repository layout
 
 ```
@@ -20,19 +22,19 @@ inputs/        Selected CVE, source list, transcribed and raw NVD / KEV data
 environment/   Northbridge environment snapshot (v1.1), change log, test variants and generator
 docs/          Architecture and workflow diagram, rating policy, threat prerequisites, tool contracts,
                expected and actual test results, evidence review, design-studio worksheets
-reference/     Runnable reference implementation of the rating policy (Student A's spec)
+reference/     Runnable reference implementation of the rating policy (Role A's spec)
 config/        settings.yaml: snapshot path, source URLs, model settings, agent limits (no secrets)
-src/sources/   NVD and CISA KEV clients, file cache                          (Student B)
-src/tools/     Environment lookups and the tool registry the agent calls     (Student B)
-src/agent.py   Orchestration: intake, tool loop, validation gate, policy, actions, save (Student C)
-src/llm.py     Ollama Cloud client                                            (Student C)
-src/prompts.py System prompt, submit_findings schema, action prompt          (Student C)
-src/validation.py  Checks the model's facts against the tool results         (Student C)
-src/evidence.py    Evidence ledger, citations, blinding of test-variant names (Student C)
-src/policy.py  Rating policy as code                                         (Student C)
-src/report.py  assessment.json and report.md                                 (Student C)
-src/faults.py  Controlled failures for testing                               (Student D)
-src/run_checks.py  Live policy checks + failures vs expected results         (Student D)
+src/sources/   NVD and CISA KEV clients, file cache                          (Role B)
+src/tools/     Environment lookups and the tool registry the agent calls     (Role B)
+src/agent.py   Orchestration: intake, tool loop, validation gate, policy, actions, save (Role C)
+src/llm.py     Ollama Cloud client                                            (Role C)
+src/prompts.py System prompt, submit_findings schema, action prompt          (Role C)
+src/validation.py  Checks the model's facts against the tool results         (Role C)
+src/evidence.py    Evidence ledger, citations, blinding of test-variant names (Role C)
+src/policy.py  Rating policy as code                                         (Role C)
+src/report.py  assessment.json and report.md                                 (Role C)
+src/faults.py  Controlled failures for testing                               (Role D)
+src/run_checks.py  Live policy checks + failures vs expected results         (Role D)
 tests/         pytest: tools (B); policy parity, agent, validation (D); expected_results.json
 cache/         Cached NVD and KEV responses, used when a live lookup fails
 outputs/       Saved runs: outputs/checks_<timestamp>/ has every live check run
@@ -95,7 +97,7 @@ python -m pytest
 
 The tests use no LLM and no network. NVD and KEV responses are replayed from the raw files in `inputs/`, and a scripted model stands in for the LLM. To also call the real NVD and KEV services, set the environment variable `RUN_LIVE=1`.
 
-To check Student A's policy reference against the snapshot and variants:
+To check Role A's policy reference against the snapshot and variants:
 
 ```
 python reference/policy_reference.py environment/northbridge-v1.1.json
@@ -114,7 +116,7 @@ python reference/policy_reference.py environment/variants/env_patched.json W15
 | `docs/design_studio/` | In-class worksheets (Team 3, Team 6) and the revised worksheet for this project |
 | `baseline/` | Frozen Assignment 3 baseline |
 
-## Student A sections
+## Role A sections
 
 ### Selected case
 
@@ -175,15 +177,15 @@ CVSS describes technical severity; the rating describes local risk. The full pol
 - Severity uses CVSS v3.1 only. CVSS v4.0 and EPSS were not used.
 - The NVD and KEV inputs were first transcribed through a web-reading tool. The raw files have since been saved and compared (`inputs/SOURCES.md`); no fact used by the policy differed.
 
-### Contributions: Student A
+### Contributions: Role A
 
 Case selection and source collection; environment adaptation (v1.1), assumptions and change log; test variants and generator script; rating policy design and justification; threat prerequisites; expected results; reference policy implementation for checking expected results.
 
 ### AI assistance
 
-Claude (Anthropic) helped Student A select the CVE, look up current vendor version numbers, draft the policy and change log, and write the snapshot, variant generator and reference policy scripts. Student A reviewed and edited all output; the group verified the policy at the consensus meeting.
+Claude (Anthropic) helped Puminun (Role A) select the CVE, look up current vendor version numbers, draft the policy and change log, and write the snapshot, variant generator and reference policy scripts. Puminun reviewed and edited all output; the group verified the policy at the consensus meeting.
 
-## Student B sections
+## Role B sections
 
 ### Tools
 
@@ -213,7 +215,7 @@ Every call returns the same wrapper: `tool`, `args`, `status` (`live`, `cached`,
 
 ### Raw source data
 
-The raw NVD response and KEV entry for CVE-2026-85880 are saved as `inputs/CVE-2026-85880_nvd_raw.json` and `inputs/CVE-2026-85880_kev_raw.json` (retrieved 2026-10-12 UTC; KEV catalog version 2026.10.08). Compared field by field with Student A's transcribed files, they show no difference in any fact the policy uses: CVSS 7.8, KEV dates and every fixed build match. The differences in wording and extra fields are listed in `inputs/SOURCES.md`.
+The raw NVD response and KEV entry for CVE-2026-85880 are saved as `inputs/CVE-2026-85880_nvd_raw.json` and `inputs/CVE-2026-85880_kev_raw.json` (retrieved 2026-10-12 UTC; KEV catalog version 2026.10.08). Compared field by field with Role A's transcribed files, they show no difference in any fact the policy uses: CVSS 7.8, KEV dates and every fixed build match. The differences in wording and extra fields are listed in `inputs/SOURCES.md`.
 
 ### Limitations (tools)
 
@@ -225,15 +227,15 @@ The raw NVD response and KEV entry for CVE-2026-85880 are saved as `inputs/CVE-2
 - Tool results include the snapshot file name and ID. For the test variants these name the test, which the model can see.
 - The cached KEV feed is a snapshot in time; a `cached` answer can be out of date.
 
-### Contributions: Student B
+### Contributions: Role B
 
 NVD and KEV clients; file cache and retry-then-cache fallback; environment lookup functions; tool schemas and the validating registry; settings file; raw source data and the raw-versus-transcribed comparison; tool tests; tool contract documentation.
 
 ### AI assistance
 
-Claude (Anthropic) helped Student B write the source clients, environment tools, registry, tests and tool contract documentation, fetch the raw NVD and KEV data, and compare it with the transcribed files. Student B reviewed the output; the tests were run before each commit.
+Claude (Anthropic) helped Puminun (Role B) write the source clients, environment tools, registry, tests and tool contract documentation, fetch the raw NVD and KEV data, and compare it with the transcribed files. Puminun reviewed the output; the tests were run before each commit.
 
-## Student C sections
+## Role C sections
 
 ### Agent design
 
@@ -259,12 +261,12 @@ The model sees a **blinded** copy of each tool result: the snapshot's file name 
 
 Top-level sections cover the threat, the overall result, product coverage, the external lookups, agent activity and human review status.
 
-## Student D sections
+## Role D sections
 
 ### Testing
 
 - **Offline** (`python -m pytest`, 111 tests, no LLM or network):
-  - `src/policy.py` gives the same applicability, priority and decision as Student A's reference on all 48 asset records of the base snapshot and all four variants.
+  - `src/policy.py` gives the same applicability, priority and decision as Role A's reference on all 48 asset records of the base snapshot and all four variants.
   - With a scripted model, the agent produces the expected result for all five checks.
   - Every controlled failure behaves as designed: NVD down with and without cache, KEV down, 3 invalid tool calls, model outage, text-only replies.
   - The validator catches a made-up build and a fixed build "from memory".
@@ -282,6 +284,6 @@ Expected vs actual results, the demonstration checklist and limitations are in `
 - **The invalid-tool failure is induced.** It is triggered by an instruction in the task message, because a real model rarely asks for a non-existent tool on its own. The 3-rejection stop is shown with a scripted model.
 - **Confidence is coarse.** It follows the policy's three rules, so almost every applicable result is Medium: the builds and the access path come from group-simulated evidence (S07, S08).
 
-### AI assistance (Students C and D)
+### AI assistance (Roles C and D)
 
 Claude (Anthropic) helped Supawich write the agent loop, prompts, validator, policy code, report output, tests, check runner, diagram and documentation. It also ran the live checks. Supawich reviewed the design decisions (model provider, scope, framework, workflow) and the outputs. The group reviewed the final assessment and its citations (`docs/evidence_review.md`).
