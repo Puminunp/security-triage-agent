@@ -4,11 +4,14 @@ An agentic cyber threat intelligence (CTI) risk-triage system that rates a CVE a
 
 ## Group members
 
-| Name | Roles | Contributions |
+| Member | Role | Contributions |
 |---|---|---|
-| Puminun Prommark (pp273) | A, B | **A:** case selection and sources; environment v1.1, change log and test variants; rating policy; threat prerequisites; expected results; reference policy implementation. **B:** agent tools and registry; NVD and KEV clients; cache and failure fallback; raw source data and comparison; tool tests; tool contracts |
-| Supawich Puengdang (sp803) | C, D | **C:** agent loop and orchestration; prompts; policy code; output validation; evidence ledger and blinding; LLM client; assessment and report output. **D:** workflow diagram and architecture document; offline test suite (policy parity, agent, validation, failures); live check runner; controlled failures; expected-vs-actual results; evidence review checklist; baseline; design-studio worksheets |
-| Both | — | Consensus rating, review of the final assessment and its citations, README review, video demo |
+| Puminun Prommark (pp273) | A: case and policy | Case selection and sources, environment v1.1 and test variants, rating policy, expected results |
+| Puminun Prommark (pp273) | B: tools | NVD and KEV clients, cache and failure fallback, environment lookups, tool registry, tool tests and contracts |
+| Supawich Puengdang (sp803) | C: agent | Agent loop, prompts, output validation, policy code, assessment and report output |
+| Supawich Puengdang (sp803) | D: design and testing | Architecture and workflow diagram, test suite, live checks and controlled failures, evidence review checklist, baseline |
+
+Both members: consensus rating, review of the final assessment and its citations, video demo.
 
 ## Repository layout
 
@@ -256,10 +259,6 @@ The model sees a **blinded** copy of each tool result: the snapshot's file name 
 
 Top-level sections cover the threat, the overall result, product coverage, the external lookups, agent activity and human review status.
 
-### Contributions: Student C
-
-Agent loop and orchestration; system and action prompts; the `submit_findings` contract; output validator; evidence ledger and blinding; policy code; Ollama Cloud client; assessment and report output; CLI.
-
 ## Student D sections
 
 ### Testing
@@ -282,10 +281,6 @@ Expected vs actual results, the demonstration checklist and limitations are in `
 - **Conflict detection is narrow.** Code detects conflicts with the same rule as the reference: an evidence fact `<asset_id>: ...` that states a different build. Other kinds of disagreement are caught only if the model reports them.
 - **The invalid-tool failure is induced.** It is triggered by an instruction in the task message, because a real model rarely asks for a non-existent tool on its own. The 3-rejection stop is shown with a scripted model.
 - **Confidence is coarse.** It follows the policy's three rules, so almost every applicable result is Medium: the builds and the access path come from group-simulated evidence (S07, S08).
-
-### Contributions: Student D
-
-Architecture document and workflow diagram; offline test suite; live check runner and controlled-failure injection; expected-vs-actual results; evidence review checklist; baseline; design-studio worksheets.
 
 ### AI assistance (Students C and D)
 
