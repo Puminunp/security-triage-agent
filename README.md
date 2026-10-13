@@ -4,11 +4,14 @@ An agentic cyber threat intelligence (CTI) risk-triage system that rates a CVE a
 
 ## Group members
 
-| Name | Roles | Contributions |
+| Member | Role | Contributions |
 |---|---|---|
-| Puminun Prommark (pp273) | A, B | **A:** case selection and sources; environment v1.1, change log and test variants; rating policy; threat prerequisites; expected results; reference policy implementation. **B:** agent tools and registry; NVD and KEV clients; cache and failure fallback; raw source data and comparison; tool tests; tool contracts |
-| Supawich Puengdang (sp803) | C, D | **C:** agent loop and orchestration; prompts; policy code; output validation; evidence ledger and blinding; LLM client; assessment and report output. **D:** workflow diagram and architecture document; offline test suite (policy parity, agent, validation, failures); live check runner; controlled failures; expected-vs-actual results; evidence review checklist; baseline; design-studio worksheets |
-| Both | — | Consensus rating, review of the final assessment and its citations, README review, video demo |
+| Puminun Prommark (pp273) | A: case and policy | Case selection and sources, environment v1.1 and test variants, rating policy, expected results |
+| Puminun Prommark (pp273) | B: tools | NVD and KEV clients, cache and failure fallback, environment lookups, tool registry, tool tests and contracts |
+| Supawich Puengdang (sp803) | C: agent | Agent loop, prompts, output validation, policy code, assessment and report output |
+| Supawich Puengdang (sp803) | D: design and testing | Architecture and workflow diagram, test suite, live checks and controlled failures, evidence review checklist, baseline |
+
+Both members: consensus rating, review of the final assessment and its citations, video demo.
 
 ## Repository layout
 
