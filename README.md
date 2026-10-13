@@ -87,6 +87,31 @@ python -m src.run_checks
 
 This writes `outputs/checks_<timestamp>/summary.md` (expected vs actual) and one run folder per check.
 
+## Demo app (one page for the whole walkthrough)
+
+```
+python -m demo
+```
+
+Open http://127.0.0.1:8765. It is a local, standard-library web app (`demo/`) that explains the project and drives the real code on one page. There are 12 scenes:
+
+- **Part 1 (Puminun):**
+  - question
+  - CVE / NVD / CVSS / KEV, with the real NVD and KEV data
+  - interactive company map with the four test variants
+  - rulebook
+  - policy playground (calls `src/policy.py`)
+  - tools, with live "Try it" calls through `registry.execute`
+- **Part 2 (Supawich):**
+  - interactive workflow diagram
+  - **live agent run** streamed step by step, with optional controlled failures, or a replay of any saved run
+  - validator
+  - expected vs actual, with a replay of each check and an in-page `pytest`
+  - evidence review and baseline
+  - limitations
+
+Keys: `←`/`→` change scenes, `P` opens a presenter-notes window to keep outside the recording, `N` shows notes inline, and `F` hides the sidebar. Live runs from the page are saved to `outputs/demo_runs/`. The server listens on 127.0.0.1 only.
+
 ## Running the tests
 
 ```
@@ -284,4 +309,4 @@ Expected vs actual results, the demonstration checklist and limitations are in `
 
 ### AI assistance (Roles C and D)
 
-Claude (Anthropic) helped Supawich write the agent loop, prompts, validator, policy code, report output, tests, check runner, diagram and documentation. It also ran the live checks. Supawich reviewed the design decisions (model provider, scope, framework, workflow) and the outputs. The group reviewed the final assessment and its citations (`docs/evidence_review.md`).
+Claude (Anthropic) helped Supawich write the agent loop, prompts, validator, policy code, report output, tests, check runner, diagram, demo web app and documentation. It also ran the live checks. Supawich reviewed the design decisions (model provider, scope, framework, workflow) and the outputs. The group reviewed the final assessment and its citations (`docs/evidence_review.md`).

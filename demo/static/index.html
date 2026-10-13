@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Security Triage Agent · Demo</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+</head>
+<body>
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="brand-mark" id="brand-icon"></div>
+      <div>
+        <div class="brand-title">Security Triage Agent</div>
+        <div class="brand-sub">CYBERSEC 590 · Assignment 3</div>
+      </div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="side-foot">
+      <kbd>←</kbd><kbd>→</kbd> scenes · <kbd>P</kbd> presenter notes · <kbd>N</kbd> inline notes · <kbd>F</kbd> hide sidebar
+    </div>
+  </aside>
+
+  <main id="main">
+    <header id="scene-head">
+      <div>
+        <div id="scene-kicker"></div>
+        <h1 id="scene-title"></h1>
+      </div>
+      <div id="scene-narrator"></div>
+    </header>
+    <section id="scene"></section>
+    <footer id="scene-foot">
+      <button class="btn ghost" id="prev">← Previous</button>
+      <div id="progress"></div>
+      <button class="btn ghost" id="next">Next →</button>
+    </footer>
+  </main>
+
+  <div id="notes" class="hidden">
+    <div class="notes-head">Speaker notes <span class="muted">(press N to hide; not part of the recording)</span></div>
+    <div id="notes-body"></div>
+  </div>
+
+  <div id="modal" class="hidden">
+    <div class="modal-card">
+      <div class="modal-head"><div id="modal-title"></div><button class="btn ghost" id="modal-close">Close ✕</button></div>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

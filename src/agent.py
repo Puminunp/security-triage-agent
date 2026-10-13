@@ -22,7 +22,7 @@ from pathlib import Path
 from src import faults as fault_mod
 from src import policy, prompts, report
 from src.config import REPO_ROOT, load_settings, resolve
-from src.evidence import Ledger
+from src.evidence import Ledger, preview
 from src.llm import LLMError, OllamaClient
 from src.tools import registry
 from src.validation import validate
@@ -31,15 +31,25 @@ CVE_PATTERN = r"^CVE-\d{4}-\d{4,}$"
 
 
 class Trace:
-    """Ordered record of everything that happened in a run (saved as trace.jsonl)."""
+    """Ordered record of everything that happened in a run (saved as trace.jsonl).
 
-    def __init__(self):
+    on_event (optional) is called with each event as it happens; the demo app
+    uses it to stream a live run. ledger is set by run() so a viewer can open
+    the full tool result behind each event.
+    """
+
+    def __init__(self, on_event=None):
         self.events = []
         self.t0 = time.monotonic()
+        self.on_event = on_event
+        self.ledger = None
 
     def add(self, kind, **data):
-        self.events.append({"seq": len(self.events) + 1,
-                            "t": round(time.monotonic() - self.t0, 3), "event": kind, **data})
+        event = {"seq": len(self.events) + 1, "t": round(time.monotonic() - self.t0, 3),
+                 "event": kind, **data}
+        self.events.append(event)
+        if self.on_event:
+            self.on_event(event)
 
 
 def _now():
@@ -187,7 +197,7 @@ def investigate(llm, intake_info, snapshot_path, ledger, trace, cfg, faults):
                 trace.add("tool_call", ref=entry["ref"], tool=name, args=args,
                           status=result.get("status"), source_mode=result.get("source_mode"),
                           source=entry["blinded"].get("source"), error=result.get("error"),
-                          rejected=entry["rejected"])
+                          rejected=entry["rejected"], preview=preview(name, args, result))
                 reply = model_view(entry)
                 if ledger.rejected >= cfg["max_rejected_calls"]:
                     return stop("stopped_rejected_calls",
@@ -343,18 +353,19 @@ def draft_actions(llm, rated, threat, intake_info, trace, ledger):
 # --- entry point -------------------------------------------------------------
 
 def run(cve_id, snapshot_path=None, llm=None, faults=(), label=None, out_root="outputs",
-        save=True):
+        save=True, trace=None):
     settings = load_settings()
     cfg = settings["agent"]
     faults = tuple(faults or ())
     started = _now()
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + (f"_{label}" if label else "")
-    trace = Trace()
+    trace = trace or Trace()
 
     info = intake(cve_id, snapshot_path, settings)
     trace.add("intake", **info)
     llm = llm or OllamaClient(settings)
     ledger = Ledger(info["snapshot_file"], info["snapshot_id"])
+    trace.ledger = ledger
 
     with fault_mod.inject(faults, llm):
         trace.add("faults", faults=list(faults))
