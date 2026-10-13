@@ -13,8 +13,6 @@ An agentic cyber threat intelligence (CTI) risk-triage system that rates a CVE a
 
 Both members: consensus rating, review of the final assessment and its citations, video demo.
 
-The work was split into four roles, A to D, shared between the two members. Sections below are labeled by role. Some project documents refer to the same roles as "Student A" to "Student D".
-
 ## Repository layout
 
 ```
