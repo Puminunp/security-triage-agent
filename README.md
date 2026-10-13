@@ -256,10 +256,6 @@ The model sees a **blinded** copy of each tool result: the snapshot's file name 
 
 Top-level sections cover the threat, the overall result, product coverage, the external lookups, agent activity and human review status.
 
-### Contributions: Student C
-
-Agent loop and orchestration; system and action prompts; the `submit_findings` contract; output validator; evidence ledger and blinding; policy code; Ollama Cloud client; assessment and report output; CLI.
-
 ## Student D sections
 
 ### Testing
@@ -282,10 +278,6 @@ Expected vs actual results, the demonstration checklist and limitations are in `
 - **Conflict detection is narrow.** Code detects conflicts with the same rule as the reference: an evidence fact `<asset_id>: ...` that states a different build. Other kinds of disagreement are caught only if the model reports them.
 - **The invalid-tool failure is induced.** It is triggered by an instruction in the task message, because a real model rarely asks for a non-existent tool on its own. The 3-rejection stop is shown with a scripted model.
 - **Confidence is coarse.** It follows the policy's three rules, so almost every applicable result is Medium: the builds and the access path come from group-simulated evidence (S07, S08).
-
-### Contributions: Student D
-
-Architecture document and workflow diagram; offline test suite; live check runner and controlled-failure injection; expected-vs-actual results; evidence review checklist; baseline; design-studio worksheets.
 
 ### AI assistance (Students C and D)
 
