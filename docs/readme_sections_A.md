@@ -16,13 +16,41 @@ We adapted the course-supplied Northbridge Services scenario (v1.0) into `enviro
 
 ## Rating policy (summary)
 
-1. **Applicability gate:** not applicable → Low; unknown or conflicting decisive fact → INSUFFICIENT_EVIDENCE.
-2. **Machine priority (impact):** PII without protection / with protection / none × internet / intranet / internal only → P1–P3, with P1 overrides for Tier-0 identity, control planes and 4-hour-RTO services.
-3. **Severity:** CVSS v3.1 band.
-4. **Final matrix:** priority × severity → High / Medium / Low.
-5. **Modifiers:** KEV +1, then Partial −1.
+The rating is computed by code in five steps. The model never chooses it.
 
-CVSS describes technical severity; the rating describes local risk. The full policy with justifications is in `docs/rating_policy.md`.
+1. **Applicability gate:** not applicable → Low; unknown or conflicting decisive fact → INSUFFICIENT_EVIDENCE.
+2. **Machine priority (impact):** data sensitivity × exposure → P1–P3 (matrix 1), with P1 overrides.
+3. **Severity:** CVSS v3.1 band (Critical 9.0–10.0, High 7.0–8.9, Medium 4.0–6.9, Low 0.1–3.9).
+4. **Final matrix:** machine priority × vulnerability severity → High / Medium / Low (matrix 2).
+5. **Modifiers:** KEV +1, then Partial −1. The result never goes above High or below Low.
+
+**Matrix 1: machine priority = data sensitivity × exposure**
+
+| Data \ Exposure | Internet | Intranet | Internal only |
+|---|---|---|---|
+| **PII without protection** | P1 | P1 | P2 |
+| **PII with protection** | P1 | P2 | P3 |
+| **No PII** | P2 | P3 | P3 |
+
+Unknown protection counts as "without protection". Three kinds of asset are always P1 whatever the matrix says: Tier-0 identity, control planes and remote-access gateways, and services with a 4-hour recovery target.
+
+**Matrix 2: rating = machine priority × vulnerability severity**
+
+| Priority \ Severity | Critical | High | Medium | Low |
+|---|---|---|---|---|
+| **P1** | High | High | Medium | Medium |
+| **P2** | High | Medium | Medium | Low |
+| **P3** | Medium | Low | Low | Low |
+
+**How CVE-2026-85880 (severity High, in KEV) moves through the matrices:**
+
+| Asset | Matrix 1 | Matrix 2 | Modifiers | Rating |
+|---|---|---|---|---|
+| W15 legacy finance servers | PII without protection × Intranet = P1 | P1 × High = High | KEV +1 (already at the top) | **High** |
+| W15 in the impact-change variant | No PII × Internal only = P3 | P3 × High = Low | KEV +1 | **Medium** |
+| W02 offline root CA | P1 by override (Tier-0 identity) | P1 × High = High | KEV +1, then Partial −1 | **Medium** |
+
+CVSS describes technical severity; the rating describes local risk. The full policy, with the justification for every cell, is in `docs/rating_policy.md`.
 
 ## Limitations (environment and policy)
 
@@ -31,7 +59,7 @@ CVSS describes technical severity; the rating describes local risk. The full pol
 - Versions and assumptions are simulated additions to a fictional scenario; real environments would need verified asset data.
 - The low-privilege access path on W15 (A15) is an assumption, which lowers confidence in the main result to Medium.
 - Severity uses CVSS v3.1 only. CVSS v4.0 and EPSS were not used.
-- The NVD and KEV inputs were first transcribed through a web-reading tool; the raw files must be saved before the baseline is frozen.
+- The NVD and KEV inputs were first transcribed through a web-reading tool. The raw files have since been saved and compared (`inputs/SOURCES.md`); no fact used by the policy differed.
 
 ## Contributions: Student A
 
