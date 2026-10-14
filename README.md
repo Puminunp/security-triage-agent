@@ -6,8 +6,8 @@ An agentic cyber threat intelligence (CTI) risk-triage system that rates a CVE a
 
 | Member | Roles | Contributions |
 |---|---|---|
-| Paul Prommark (pp273) | A: Case and policy<br>B: Tools | **A:** case selection and sources, environment v1.1 and test variants, rating policy, expected results<br>**B:** NVD and KEV clients, cache and failure fallback, environment lookups, tool registry, tool tests and contracts |
-| Supawich Puengdang (sp803) | C: Agent<br>D: design and testing | **C:** agent loop, prompts, output validation, policy code, assessment and report output<br>**D:** Architecture and workflow diagram, test suite, live checks and controlled failures, evidence review checklist, baseline |
+| Paul Prommark (pp273) | A: Case and policy<br>B: Tools | **A:** Case selection and sources, environment v1.1 and test variants, rating policy, expected results<br>**B:** NVD and KEV clients, cache and failure fallback, environment lookups, tool registry, tool tests and contracts |
+| Supawich Puengdang (sp803) | C: Agent<br>D: Design and testing | **C:** Agent loop, prompts, output validation, policy code, assessment and report output<br>**D:** Architecture and workflow diagram, test suite, live checks and controlled failures, evidence review checklist, baseline |
 
 Both members: consensus rating, review of the final assessment and its citations, video demo.
 
