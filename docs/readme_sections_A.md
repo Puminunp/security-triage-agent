@@ -24,6 +24,27 @@ The rating is computed by code in five steps. The model never chooses it.
 4. **Final matrix:** machine priority × vulnerability severity → High / Medium / Low (matrix 2).
 5. **Modifiers:** KEV +1, then Partial −1. The result never goes above High or below Low.
 
+**Step 1 in detail: the applicability gate**
+
+Applicability asks whether the vulnerability can actually work on this machine. For CVE-2026-85880 there are three decisive facts: the machine runs an affected product, its build is below the fixed build, and an ordinary (non-admin) user can get onto it. The code checks them in this order, and the first answer that settles it is the result:
+
+| Step | Question | Values used | If the answer settles it |
+|---|---|---|---|
+| 1 | Is the product on NVD's affected list? | OS name/version; NVD affected products | No → **Not applicable** (Low) |
+| 2 | Do the sources agree on the build, and is it known? | `os.build`; evidence record S08 | Disagree → **Conflict**; blank → **Unknown** (both INSUFFICIENT_EVIDENCE) |
+| 3 | Is the build below the first fixed build? | `os.build`; NVD `versionEndExcluding` | At or above → **Not applicable** (Low) |
+| 4 | Can an ordinary user get onto the machine? | `low_priv_local_access`; `exposure` | Unknown → **Unknown**; isolated or admins only → **Partial**; yes → **Confirmed** |
+
+Builds are compared number by number (10.0.14393.9339 < 10.0.14393.9512). A fact that is unknown is never guessed: it stops the gate and sends the asset to an analyst. **Confirmed** and **Partial** continue to steps 2–5; Partial takes −1 at the end.
+
+| Asset | Step 1 | Step 2 | Step 3 | Step 4 | Applicability |
+|---|---|---|---|---|---|
+| W15 legacy finance servers | Server 2016, affected | 9339 in record and S08 | 9339 < 9512 | Payroll operators (non-admin) log on | **Confirmed** |
+| W02 offline root CA | Server 2022, affected | 5256 in record and S08 | 5256 < 5622 | Isolated, admins only | **Partial** |
+| Other Server 2022 servers | Server 2022, affected | 5622 in record and S08 | 5622 = fixed | not reached | **Not applicable** |
+| E02 stale-sensor workstations | Windows 10 22H2, affected | Build blank | not reached | not reached | **Unknown** |
+| Windows 11 laptops | Not on the list | not reached | not reached | not reached | **Not applicable** |
+
 **Matrix 1: machine priority = data sensitivity × exposure**
 
 | Data \ Exposure | Internet | Intranet | Internal only |
