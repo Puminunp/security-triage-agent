@@ -61,3 +61,25 @@ def test_http_serves_page_and_rejects_unknown_tool():
         assert body["result"]["status"] == "error" and "unknown tool" in body["result"]["error"]
     finally:
         httpd.shutdown()
+
+
+def test_review_marks_and_signoff_are_saved(tmp_path, monkeypatch):
+    doc = tmp_path / "evidence_review.md"
+    doc.write_text(server.REVIEW_DOC.read_text(encoding="utf-8"), encoding="utf-8")
+    monkeypatch.setattr(server, "REVIEW_DOC", doc)
+    st = server.review_state()
+    assert len(st["items"]) == 19 and {s["name"] for s in st["signoff"]} == {"Paul Prommark", "Supawich Puengdang"}
+    server.review_mark({"id": "A11", "verdict": "issue", "note": "step 3 | misreads the config"})
+    server.review_mark({"id": "C4", "verdict": "ok", "note": ""})
+    server.review_signoff({"name": "Paul Prommark", "date": "2026-10-14", "result": "Agree"})
+    st = server.review_state()
+    rows = {i["id"]: i["review"] for i in st["items"]}
+    assert rows["A11"] == "⚠️ step 3 / misreads the config" and rows["C4"] == "✅"
+    assert st["signoff"][0] == {"name": "Paul Prommark", "date": "2026-10-14", "result": "Agree"}
+    with pytest.raises(ValueError):
+        server.review_mark({"id": "A1", "verdict": "maybe"})
+
+
+def test_every_review_claim_has_sources():
+    for item in server.review_state()["items"]:
+        assert server.review_sources(item["id"])["sources"], item["id"]

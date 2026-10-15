@@ -93,7 +93,7 @@ python -m demo
 
 Open http://127.0.0.1:8765. It is a local, standard-library web app (`demo/`) that explains the project and drives the real code on one page. There are 12 scenes:
 
-- **Part 1 (Puminun):**
+- **Part 1 (Paul):**
   - question
   - CVE / NVD / CVSS / KEV, with the real NVD and KEV data
   - interactive company map with the four test variants
@@ -225,7 +225,7 @@ Case selection and source collection; environment adaptation (v1.1), assumptions
 
 ### AI assistance
 
-Claude (Anthropic) helped Puminun (Role A) select the CVE, look up current vendor version numbers, draft the policy and change log, and write the snapshot, variant generator and reference policy scripts. Puminun reviewed and edited all output; the group verified the policy at the consensus meeting.
+Claude (Anthropic) helped Paul (Role A) select the CVE, look up current vendor version numbers, draft the policy and change log, and write the snapshot, variant generator and reference policy scripts. Paul reviewed and edited all output; the group verified the policy at the consensus meeting.
 
 ## Role B sections
 
@@ -263,7 +263,7 @@ The raw NVD response and KEV entry for CVE-2026-85880 are saved as `inputs/CVE-2
 
 - NVD's CPE data has no fixed build for Windows Server 2012 and 2012 R2. The tool reports it as unknown and gives the vendor's numbers separately (`cna_affected`). Northbridge has no Server 2012.
 - The CVSS score is the Microsoft CNA score, because NVD has not published its own for this CVE. The tool records which score it used.
-- The MSRC advisory (source T3) is not fetched by a tool; the page needs a browser.
+- The MSRC advisory (source T3) is not fetched by a tool, because the page needs a browser. A copy was saved by hand as `inputs/CVE-2026-85880_msrc.pdf` (2026-10-14), and its fixed builds match NVD.
 - `search_assets` is plain text matching, so it can miss a product that is named differently in the snapshot.
 - Every null is listed in `unknown_fields`, including `priority_override` and `business_service`, which are null by design on most assets.
 - Tool results include the snapshot file name and ID. For the test variants these name the test, which the model can see.
@@ -275,7 +275,7 @@ NVD and KEV clients; file cache and retry-then-cache fallback; environment looku
 
 ### AI assistance
 
-Claude (Anthropic) helped Puminun (Role B) write the source clients, environment tools, registry, tests and tool contract documentation, fetch the raw NVD and KEV data, and compare it with the transcribed files. Puminun reviewed the output; the tests were run before each commit.
+Claude (Anthropic) helped Paul (Role B) write the source clients, environment tools, registry, tests and tool contract documentation, fetch the raw NVD and KEV data, and compare it with the transcribed files. Paul reviewed the output; the tests were run before each commit.
 
 ## Role C sections
 

@@ -1,10 +1,10 @@
 # Design Studio worksheet, revised for Assignment 3
 
 **Scenario:** Security triage agent, CVE-2026-85880 against Northbridge Services
-**Team members:** Puminun Prommark (pp273), Supawich Puengdang (sp803)
+**Team members:** Paul Prommark (pp273), Supawich Puengdang (sp803)
 
 The in-class worksheets are kept unchanged in this folder:
-`team3_vulnerability_prioritization_puminun.md` (Puminun, Team 3) and `team6_incident_containment_supawich.md` (Supawich, Team 6). This page answers the same five questions for the system we built. The full design is in `docs/architecture.md`.
+`team3_vulnerability_prioritization_puminun.md` (Paul, Team 3) and `team6_incident_containment_supawich.md` (Supawich, Team 6). This page answers the same five questions for the system we built. The full design is in `docs/architecture.md`.
 
 ## Lessons carried over from the in-class activity
 
@@ -46,7 +46,7 @@ Why this pattern: the decision path is short and the same every time (look up th
 | `lookup_environment` (snapshot) | action + query → asset records, evidence S01–S08, flows, absences | `not_found` says "does not prove absence"; nulls listed as unknown, never guessed |
 | `submit_findings` (code gate) | facts per asset → accepted, or errors to fix | 3 attempts, then unverified assets → INSUFFICIENT_EVIDENCE |
 
-Deferred: EPSS (the policy doesn't use it), MSRC page (not machine-readable), web search (NVD and KEV are the primary sources).
+Deferred: EPSS (the policy doesn't use it), MSRC page (not machine-readable; saved by hand as a PDF to cross-check NVD), web search (NVD and KEV are the primary sources).
 
 ## 4. Failure walkthrough and trace
 

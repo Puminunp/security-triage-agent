@@ -30,7 +30,7 @@ Python 3.9 or later, standard library only.
 
 ## Still to do by hand
 
-1. Hold the consensus meeting and fill in section 1 of `docs/expected_results.md`.
+1. ~~Hold the consensus meeting and fill in section 1 of `docs/expected_results.md`.~~ Done 2026-10-14.
 2. Compare v1.1 with the course's official `windows_enterprise_environment.json` and note differences in `CHANGES.md`.
-3. Save the MSRC page as a PDF. (The raw NVD and KEV responses are saved: `inputs/CVE-2026-85880_nvd_raw.json`, `inputs/CVE-2026-85880_kev_raw.json`.)
+3. ~~Save the MSRC page as a PDF.~~ Done 2026-10-14: `inputs/CVE-2026-85880_msrc.pdf`. (The raw NVD and KEV responses are saved: `inputs/CVE-2026-85880_nvd_raw.json`, `inputs/CVE-2026-85880_kev_raw.json`.)
 4. Verify the versions marked "verify" in the snapshot.

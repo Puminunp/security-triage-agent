@@ -11,9 +11,9 @@ Expected results were set **from the written policy before any agent run**, and 
 | Case | CVE-2026-85880 on W15 (FINLEG01–02), snapshot `northbridge-v1.1` |
 | Proposed rating | **High** |
 | Reasoning | Vulnerable build (9339 < 9512), non-admin logon path exists, payroll/banking PII for 1,000 employees, reachable from the USERS zone, actively exploited (KEV), KEV due date already passed |
-| Group consensus | ☐ Agree: High ☐ Disagree: ______ |
+| Group consensus | ☑ Agree: High ☐ Disagree: ______ |
 | If disagreeing, why | |
-| Members present and date | |
+| Members present and date | Paul Prommark and Supawich Puengdang. The proposed rating was written by Role A from the policy on 2026-10-11 (commit `2632a86`), before the agent existed (first agent commit `f1e7b1e`, 2026-10-12). Both members confirmed agreement on 2026-10-14. |
 
 ## 2. Policy checks
 

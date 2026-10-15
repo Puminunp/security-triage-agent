@@ -9,7 +9,7 @@
 |---|---|
 | **Risk question** | What is the risk that **CVE-2026-85880** is exploited on Northbridge Services assets, given environment snapshot `northbridge-v1.1` (as of 2026-10-01)? |
 | **Input** | One CVE ID (`--cve`, default CVE-2026-85880) and one environment snapshot (`--snapshot`, default `environment/northbridge-v1.1.json`). The agent is **not** told which machines to look at; it has to find them. |
-| **Input scope** | One threat at a time. External evidence: NVD (T1) and CISA KEV (T2). Local evidence: the simulated Northbridge snapshot and its evidence records S01–S08. Out of scope: scanning, exploit testing, EPSS, MSRC page (T3, not machine-readable). |
+| **Input scope** | One threat at a time. External evidence: NVD (T1) and CISA KEV (T2). Local evidence: the simulated Northbridge snapshot and its evidence records S01–S08. Out of scope: scanning, exploit testing, EPSS, fetching the MSRC page (T3, not machine-readable; saved by hand as a PDF and used only to cross-check NVD). |
 | **Target environment** | Northbridge Services v1.1, adapted by Student A from the course Windows enterprise scenario (`environment/CHANGES.md`). All local data is `source_mode: simulated`. |
 | **Required output** | `outputs/<run>/assessment.json`: one decision per affected asset record (**High / Medium / Low / INSUFFICIENT_EVIDENCE**), with rationale, policy rule, evidence citations, assumptions, unknowns, confidence and recommended action. Also `report.md` (readable), `trace.jsonl`, `tool_results.json`, `messages.json`, `config.json`. |
 
@@ -141,7 +141,7 @@ Run: `python -m src.run_checks` (live model) and `python -m pytest` (offline, sc
 
 | Design (Student A handoff, policy v1.0) | Implementation | Why |
 |---|---|---|
-| Main case: assess W15 | Input is the CVE only; the agent finds every affected asset record, and W15 is the focus of the tests | Puminun's clarification: ask the tool whether a CVE affects any machine. It also matches section 4 of `expected_results.md` |
+| Main case: assess W15 | Input is the CVE only; the agent finds every affected asset record, and W15 is the focus of the tests | Paul's clarification: ask the tool whether a CVE affects any machine. It also matches section 4 of `expected_results.md` |
 | "Model extracts decisive facts" | Model extracts facts **and** code verifies each one against the tool data before the policy runs (evaluator gate with up to 2 corrections) | First live runs showed the model omitting 20 of 23 assets on the first try; the validator caught it and the model fixed it |
 | Tool names in the prompt | The prompt says explicitly that `get_evidence` etc. are actions of `lookup_environment` | The first live run called `get_evidence` as a tool and hit the 3-rejection stop |
 | Tool results shown to the model as returned | Blinded snapshot names | Student B noted the variant name leaks the test into the model's context |
