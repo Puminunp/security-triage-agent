@@ -123,7 +123,7 @@ async function go(i) {
   $('#scene-title').textContent = s.title;
   const t = TEAM[s.part];
   $('#scene-narrator').innerHTML = `<span class="muted">${t.role} · narrated by</span> <b>${t.name}</b> <span class="avatar" style="background:${t.color}">${t.short}</span>`;
-  $('#notes-body').innerHTML = `<ul>${s.notes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>`;
+  $('#notes-body').innerHTML = notesHtml(s);
   updatePresenter();
   const story = $('#scene-story');
   story.innerHTML = s.story || '';
@@ -149,12 +149,32 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ---------- presenter window (keep it outside the recorded area) ----------
+// If demo/static/notes.local.json exists (a personal script kept out of git),
+// it replaces the short talking points for the scenes it covers.
+let LOCAL_SCRIPT = {};
+const inlineMd = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\*(.+?)\*/g, '<i>$1</i>').replace(/`(.+?)`/g, '<code>$1</code>');
+function scriptHtml(blocks) {
+  let html = '', list = false;
+  for (const b of blocks) {
+    if (b.k === 'li' && !list) { html += '<ul>'; list = true; }
+    if (b.k !== 'li' && list) { html += '</ul>'; list = false; }
+    if (b.k === 'li') html += `<li>${inlineMd(b.t)}</li>`;
+    else if (b.k === 'do') html += `<p class="do">▶ ${inlineMd(b.t)}</p>`;
+    else if (b.k === 'h') html += `<h3>${inlineMd(b.t)}</h3>`;
+    else html += `<p>${inlineMd(b.t)}</p>`;
+  }
+  return html + (list ? '</ul>' : '');
+}
+const notesHtml = (s) => LOCAL_SCRIPT[s.id] ? scriptHtml(LOCAL_SCRIPT[s.id]) : `<ul>${s.notes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>`;
 let presenter = null;
 function openPresenter() {
-  presenter = window.open('', 'triage-presenter', 'width=520,height=720');
+  presenter = window.open('', 'triage-presenter', 'width=680,height=900');
   if (!presenter) { alert('Allow pop-ups for this page to open the presenter window.'); return; }
   presenter.document.title = 'Presenter notes';
-  presenter.document.body.style.cssText = 'font:16px/1.55 -apple-system,sans-serif;background:#fff8e1;color:#2b2410;margin:0;padding:18px 22px';
+  presenter.document.body.style.cssText = 'font:17px/1.6 -apple-system,sans-serif;background:#fff8e1;color:#2b2410;margin:0;padding:18px 26px';
+  const st = presenter.document.createElement('style');
+  st.textContent = '.do{color:#8a5a00;font-style:italic;font-size:15px;background:#fdeec2;padding:4px 8px;border-radius:6px} h3{margin:22px 0 6px} code{background:#f3e3b5;padding:0 4px;border-radius:4px} li{margin-bottom:6px}';
+  presenter.document.head.appendChild(st);
   presenter.onkeydown = (e) => { if (e.key === 'ArrowRight') go(current + 1); if (e.key === 'ArrowLeft') go(current - 1); };
   updatePresenter();
 }
@@ -162,7 +182,7 @@ function updatePresenter() {
   if (!presenter || presenter.closed) return;
   const s = SCENES[current], next = SCENES[current + 1];
   presenter.document.body.innerHTML = `<div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#7a6a3c">Scene ${current + 1} / ${SCENES.length} · narrated by ${esc(TEAM[s.part].name)}</div>
-    <h2 style="margin:4px 0 12px">${esc(s.title)}</h2><ol style="padding-left:20px">${s.notes.map((n) => `<li style="margin-bottom:10px">${esc(n)}</li>`).join('')}</ol>
+    <h2 style="margin:4px 0 12px">${esc(s.title)}</h2>${notesHtml(s)}
     <div style="margin-top:18px;font-size:13px;color:#7a6a3c">Next: ${next ? esc(next.title) + (next.part !== s.part ? ' · hand over to ' + esc(TEAM[next.part].name) : '') : 'end'} · ← → work in this window too</div>`;
 }
 
@@ -960,6 +980,7 @@ async function renderLimits(el) {
 }
 
 // ---------- boot ----------
+fetch('/static/notes.local.json').then((r) => (r.ok ? r.json() : {})).then((j) => { LOCAL_SCRIPT = j || {}; if (Object.keys(LOCAL_SCRIPT).length) go(current); }).catch(() => {});
 buildNav();
 window.addEventListener('hashchange', () => { const i = SCENES.findIndex((x) => x.id === location.hash.slice(1)); if (i >= 0 && i !== current) go(i); });
 const start = SCENES.findIndex((s) => s.id === location.hash.slice(1));
