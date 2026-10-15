@@ -83,3 +83,16 @@ def test_review_marks_and_signoff_are_saved(tmp_path, monkeypatch):
 def test_every_review_claim_has_sources():
     for item in server.review_state()["items"]:
         assert server.review_sources(item["id"])["sources"], item["id"]
+
+
+def test_concurrent_signoffs_do_not_overwrite_each_other(tmp_path, monkeypatch):
+    doc = tmp_path / "evidence_review.md"
+    doc.write_text(server.REVIEW_DOC.read_text(encoding="utf-8"), encoding="utf-8")
+    monkeypatch.setattr(server, "REVIEW_DOC", doc)
+    names = ["Paul Prommark", "Supawich Puengdang"]
+    threads = [threading.Thread(target=server.review_signoff,
+                                args=({"name": n, "date": "2026-10-14", "result": f"Agree {n}"},))
+               for n in names * 10]
+    [t.start() for t in threads]
+    [t.join() for t in threads]
+    assert {r["name"]: r["result"] for r in server.review_state()["signoff"]} == {n: f"Agree {n}" for n in names}

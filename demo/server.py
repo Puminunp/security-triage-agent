@@ -355,6 +355,7 @@ def main(port=8765):
 # --- evidence review (scene 11) ------------------------------------------------
 
 REVIEW_DOC = REPO_ROOT / "docs" / "evidence_review.md"
+REVIEW_LOCK = threading.Lock()  # the page can save several fields at once; one writer at a time
 ROW = re.compile(r"^\| ([ABC]\d+) \|(.*)\|\s*$")
 
 
@@ -385,6 +386,11 @@ def _clean(text):
 
 
 def review_mark(body):
+    with REVIEW_LOCK:
+        return _review_mark(body)
+
+
+def _review_mark(body):
     rid, verdict, note = body.get("id"), body.get("verdict"), _clean(body.get("note", ""))
     mark = {"ok": "✅", "issue": "⚠️", "": "☐"}.get(verdict)
     if mark is None or not re.fullmatch(r"[ABC]\d+", str(rid)):
@@ -402,6 +408,11 @@ def review_mark(body):
 
 
 def review_signoff(body):
+    with REVIEW_LOCK:
+        return _review_signoff(body)
+
+
+def _review_signoff(body):
     name = _clean(body.get("name", ""))
     date, result = _clean(body.get("date", "")), _clean(body.get("result", ""))
     lines = REVIEW_DOC.read_text(encoding="utf-8").splitlines()

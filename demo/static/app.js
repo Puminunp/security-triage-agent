@@ -888,7 +888,7 @@ async function renderReview(el) {
         <div class="muted" style="font-size:12px;margin:4px 0 0 2px">Pre-check: ${esc(i.precheck.replace(/[`*]/g, ''))}</div>
         <div class="row" style="margin-top:8px"><button class="btn ghost small src-btn">Show me the source</button>
           <button class="btn small ok-btn" style="background:var(--low)">✓ Correct</button><button class="btn small issue-btn" style="background:var(--medium)">⚠ Problem</button>
-          <input class="note" placeholder="optional note (what you checked, or what is wrong)" value="${esc(note)}" style="flex:1;min-width:220px">
+          <input class="note" placeholder="note: saves automatically once ✓ or ⚠ is chosen" value="${esc(note)}" style="flex:1;min-width:220px">
           ${verdict ? '<button class="btn ghost small clear-btn">Undo</button>' : ''}</div>
         <div class="src-box"></div></div>`; }).join('')}</div>`).join('')}
   <h3 style="margin:22px 0 8px">Sign-off</h3>
@@ -912,13 +912,31 @@ async function renderReview(el) {
     };
     $('.ok-btn', c).onclick = () => save(id, 'ok', note());
     $('.issue-btn', c).onclick = () => save(id, 'issue', note());
+    // Notes save on their own (after a short pause in typing), keeping the current mark.
+    let t;
+    $('.note', c).oninput = () => {
+      clearTimeout(t);
+      t = setTimeout(async () => {
+        const verdict = c.classList.contains('ok') ? 'ok' : c.classList.contains('issue') ? 'issue' : '';
+        if (!verdict) return;  // a note needs a mark; it is saved when ✓ or ⚠ is clicked
+        await api.post('/api/review/mark', { id, verdict, note: note() });
+        $('.note', c).style.borderColor = 'var(--low)';
+      }, 600);
+    };
     $('.clear-btn', c) && ($('.clear-btn', c).onclick = () => save(id, '', ''));
   });
-  $$('button[data-so]', el).forEach((b) => (b.onclick = async () => {
-    const k = b.dataset.so;
+  const saveSignoff = async (k) => {
     await api.post('/api/review/signoff', { name: st.signoff[k].name, date: $(`#so-date-${k}`).value, result: $(`#so-res-${k}`).value });
-    b.textContent = 'Saved ✓';
-  }));
+    $(`button[data-so="${k}"]`).textContent = 'Saved ✓';
+  };
+  $$('button[data-so]', el).forEach((b) => {
+    const k = b.dataset.so;
+    let t;
+    b.onclick = () => saveSignoff(k);
+    // Sign-off fields save on their own as you type or change the date.
+    $(`#so-res-${k}`).oninput = () => { $(`button[data-so="${k}"]`).textContent = 'Saving…'; clearTimeout(t); t = setTimeout(() => saveSignoff(k), 600); };
+    $(`#so-date-${k}`).onchange = () => saveSignoff(k);
+  });
 }
 
 // ---------- 12 limits ----------

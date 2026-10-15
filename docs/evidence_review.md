@@ -20,7 +20,7 @@ The "Pre-check" column was filled in by a scripted cross-check (Claude, while pr
 | A8 | Rule `P1 x High = High; KEV +1 -> High` follows `docs/rating_policy.md` sections 3–6 | Policy document | Matches policy sections 3–6 | ✅ |
 | A9 | Confidence Medium because the decisive facts rely on S07/S08 (section 7) | Policy section 7 | Matches: decisive sources T1, S08, T2, S07 | ✅ |
 | A10 | Every citation has a source, a timestamp and the right mode (NVD/KEV `live`, snapshot `simulated`) | `report.md` evidence list | 7 citations: R3, R8, R9, R11, R12 simulated (snapshot locators); R1, R2 live with retrieved_at 2026-10-12T18:50Z | ✅ |
-| A11 | The recommended action is sensible and doesn't contradict the rating | `report.md` (model-drafted text) | Steps 1 (patch to ≥ 9512) and 2 (restrict NTLM / `svc_finlegacy`) are sound, and it notes the KEV due date has passed. Step 3 misreads `patch_approval_recorded_days_before_snapshot: 60` as a requirement: **reviewer should edit or reject that step** | ⚠️ |
+| A11 | The recommended action is sensible and doesn't contradict the rating | `report.md` (model-drafted text) | Steps 1 (patch to ≥ 9512) and 2 (restrict NTLM / `svc_finlegacy`) are sound, and it notes the KEV due date has passed. Step 3 misreads `patch_approval_recorded_days_before_snapshot: 60` as a requirement: **reviewer should edit or reject that step** | ⚠️ Step 3 misreads patch_approval_recorded_days_before_snapshot as a requirement; steps 1-2 are sound and the High rating is unaffected |
 
 ## B. Other non-Low assets
 
@@ -44,7 +44,7 @@ The "Pre-check" column was filled in by a scripted cross-check (Claude, while pr
 
 | Reviewer | Date | Result (agree / disagree, with reason) |
 |---|---|---|
-| Paul Prommark | 2026-10-14 |  |
-| Supawich Puengdang | 2026-10-14 |  |
+| Paul Prommark | 2026-10-14 | Agree: W15 = High is supported by the primary sources (NVD, MSRC, KEV, snapshot); A11 step 3 rejected |
+| Supawich Puengdang | 2026-10-14 | Agree: W15 = High is supported by the primary sources (NVD, MSRC, KEV, snapshot); A11 step 3 rejected |
 
 The signed table above is the record of the human review. The baseline files stay frozen, so `human_review.status` inside `baseline/main_run/assessment.json` keeps its original value `pending`.
