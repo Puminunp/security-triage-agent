@@ -65,13 +65,13 @@ function callText(name, args) {
 
 // ---------- scenes ----------
 const TEAM = {
-  1: { name: 'Puminun Prommark', short: 'PP', color: 'var(--accent)', role: 'Part 1 · A + B' },
+  1: { name: 'Paul Prommark', short: 'PP', color: 'var(--accent)', role: 'Part 1 · A + B' },
   2: { name: 'Supawich Puengdang', short: 'SP', color: 'var(--accent-2)', role: 'Part 2 · C + D' },
 };
 
 const SCENES = [
   { id: 'intro', part: 1, icon: 'shield', kicker: 'Overview', title: 'The question we answer', render: renderIntro,
-    notes: ['Hi, we are Puminun Prommark and Supawich Puengdang. I did parts A and B: the case, the environment, the rating policy and the tools. Supawich did parts C and D: the agent, validation, testing and this demo.', 'Our question: a known Windows bug, CVE-2026-85880, is out there. Does it matter for our company, which machines does it hit, how risky is each one for us, and what should we do?', 'The pipeline on screen: we give the agent only the bug ID. The AI decides what to look up, code checks its work and applies our rulebook, and a human signs off.', 'The table at the bottom is the plain-language version: it works like a hospital triage.'] },
+    notes: ['Hi, we are Paul Prommark and Supawich Puengdang. I did parts A and B: the case, the environment, the rating policy and the tools. Supawich did parts C and D: the agent, validation, testing and this demo.', 'Our question: a known Windows bug, CVE-2026-85880, is out there. Does it matter for our company, which machines does it hit, how risky is each one for us, and what should we do?', 'The pipeline on screen: we give the agent only the bug ID. The AI decides what to look up, code checks its work and applies our rulebook, and a human signs off.', 'The table at the bottom is the plain-language version: it works like a hospital triage.'] },
   { id: 'threat', part: 1, icon: 'bug', kicker: 'Threat intelligence 101', title: 'CVE, NVD, CVSS and KEV', render: renderThreat,
     notes: ['Four public sources, four different jobs.', 'CVE is just the name: a unique ID for one bug. It is run by MITRE with funding from CISA, and Microsoft assigned this one.', 'NVD, run by NIST, adds the details we need, most importantly the first fixed build for each product. On Windows Server 2016 the fix is build 9512; anything lower is vulnerable.', 'CVSS is a 0 to 10 severity score: 7.8, High. The vector tells us the attacker needs local access with a normal user account: AV:L and PR:L.', 'KEV, from CISA, says this bug is being exploited in real attacks right now. It was added on September 8 and the federal due date has already passed.', 'Key point: 7.8 is the same for every company in the world. Our job is local risk, which is different per machine.'] },
   { id: 'company', part: 1, icon: 'building', kicker: 'Environment', title: 'Northbridge Services (simulated)', render: renderCompany,
@@ -83,15 +83,15 @@ const SCENES = [
   { id: 'tools', part: 1, icon: 'wrench', kicker: 'Tools', title: 'What the agent can call', render: renderTools,
     notes: ['An AI model can only write text. A tool call means the AI writes a request, our Python code runs it, and the result goes back to the AI.', 'I wrote three lookup tools from scratch: NVD, KEV and the company inventory. Every result says where it came from, when, and whether it\'s live, cached or simulated.', 'Try it runs the real tool right now. If NVD is down, the tool retries once, then uses a cached copy and labels it as cached.', 'And if the AI asks for a tool that doesn\'t exist, the call is rejected before anything runs. Now Supawich will show how the agent uses these tools.'] },
   { id: 'architecture', part: 2, icon: 'workflow', kicker: 'Design', title: 'How the agent works', render: renderArchitecture,
-    notes: ['Thanks Puminun. Here is how the agent fits together. Purple is the AI, blue is code, green is tools, orange is a person.', 'Inside the loop, the AI chooses which tool to call and what query to use. Code checks and runs the call and records the result in an evidence ledger, then the AI sees the result and decides the next step.', 'When the AI is done, it submits its facts. The validator checks every fact against what the tools actually returned. Then policy code decides the rating, so the AI never picks it.', 'The red paths show where the system stops instead of guessing. Let me animate one run.'] },
+    notes: ['Thanks Paul. Here is how the agent fits together. Purple is the AI, blue is code, green is tools, orange is a person.', 'Inside the loop, the AI chooses which tool to call and what query to use. Code checks and runs the call and records the result in an evidence ledger, then the AI sees the result and decides the next step.', 'When the AI is done, it submits its facts. The validator checks every fact against what the tools actually returned. Then policy code decides the rating, so the AI never picks it.', 'The red paths show where the system stops instead of guessing. Let me animate one run.'] },
   { id: 'live', part: 2, icon: 'play', kicker: 'Demonstration', title: 'Complete run', render: renderLive,
     notes: ['Now a real run: the real AI model on Ollama Cloud, live NVD and KEV data, and the company snapshot. I press Run.', 'Each card is one step. Here the model decides to look up the CVE, then to search the inventory for Windows Server 2016. Those queries are the model\'s own decisions.', 'Clicking a tool card shows the exact data that came back.', 'Here is the validator: the model\'s first answer was incomplete, so code sent the gaps back, and the model fixed them.', 'Final result: W15 is High, the offline root CA is Medium, 12 laptops with unknown patch levels need human review, and 20 machines are Low. Click W15: every fact has a source, the rule that fired, assumptions, unknowns and a recommended action.'] },
   { id: 'validator', part: 2, icon: 'check', kicker: 'Output validation', title: 'The validator: trust, but verify', render: renderValidator,
     notes: ['The validator is our \'trust, but verify\' step. Six checks, all against the tool results, never against the AI\'s own text.', 'In the baseline run, the AI\'s first submission forgot to fetch some evidence. The validator sent that back, and the second attempt passed.', 'In all 7 live check runs, the first submission had gaps. All were caught and fixed. For a triage tool, a forgotten server is the worst possible failure.'] },
   { id: 'tests', part: 2, icon: 'flask', kicker: 'Testing', title: 'Expected vs actual', render: renderTests,
     notes: ['We wrote the expected results from the policy before running anything.', 'The three required checks: change only applicability and we get Low; change only impact and we get Medium; missing or conflicting evidence gives insufficient evidence. All match.', 'Controlled failures: NVD down with a cache still gives High at Medium confidence. NVD down with no cache stops and names the failed lookup. A fake tool is rejected and the run continues.', 'Replay opens any of these runs. We also have 112 offline tests, and I\'ll run them now.'] },
-  { id: 'review', part: 2, icon: 'usercheck', kicker: 'Human review', title: 'Evidence review and baseline', render: renderReview,
-    notes: ['A group member checked every claim in the main assessment against the primary sources: the raw NVD and KEV records and the snapshot.', 'We also froze a baseline for Assignment 4: the exact inputs, configuration, code version and outputs.'] },
+  { id: 'review', part: 2, icon: 'usercheck', kicker: 'Human review', title: 'Human review of the evidence', render: renderReview,
+    notes: ['The assignment requires a group member to check the agent\'s answer against the original sources.', 'Each card is one claim. I open its source: for example W15\'s build in the company file, and the fixed build in the raw NVD record and on Microsoft\'s own page. They match, so I mark it correct.', 'One thing we flagged: the AI-written action had a wrong step 3, so we marked it as a problem. That shows the review is real.', 'Both of us signed off at the bottom. The baseline is a frozen copy of this run for Assignment 4.'] },
   { id: 'limits', part: 2, icon: 'alert', kicker: 'Wrap-up', title: 'Limitations and next steps', render: renderLimits,
     notes: ['Limitations: the environment is simulated, so real use needs real inventory data. The AI isn\'t deterministic, but the ratings were stable because code computes them. Conflict detection is narrow, and the free model service sometimes fails.', 'Next, in Assignment 4: tracing every call, evaluating over more CVEs, and comparing against this baseline. Thank you.'] },
 ];
@@ -262,7 +262,7 @@ async function renderCompany(el) {
     <span class="spacer"></span>
     <label class="field">Snapshot<select id="snap">${meta.snapshots.map((s) => `<option value="${s.path}" ${s.path === companyState.snapshot ? 'selected' : ''}>${esc(s.label)}</option>`).join('')}</select></label>
     <label class="field">Color by<select id="colorby"><option value="cve">CVE-2026-85880 result</option><option value="prio">Machine priority (impact)</option><option value="data">Data sensitivity</option></select></label>
-    <button class="btn ghost small" onclick="openDoc('changes','What we changed from the course scenario')">What Puminun changed (v1.0 → v1.1)</button>
+    <button class="btn ghost small" onclick="openDoc('changes','What we changed from the course scenario')">What Paul changed (v1.0 → v1.1)</button>
   </div>
   ${variant ? `<div class="callout warn"><b>Test variant:</b> ${esc(env.variant_change)}. Only W15 differs from the base snapshot.</div>` : ''}
   <div class="legend" style="margin-bottom:10px">${legend}<span class="muted" style="margin-left:auto">Click any machine for its full record</span></div>
@@ -343,7 +343,7 @@ async function renderPolicy(el) {
       <tbody>${['P1', 'P2', 'P3'].map((p) => `<tr><th>${p}</th>${['Critical', 'High', 'Medium', 'Low'].map((b) => { const v = fm[`${p}|${b}`]; return `<td class="cell v-${v}">${v}</td>`; }).join('')}</tr>`).join('')}</tbody></table>
       <p class="muted" style="font-size:12px">A P1 machine with a confirmed flaw is never Low.</p></div>
     <div class="card"><h3>Is it valid?</h3>
-      <p style="font-size:14px"><b>Implemented correctly:</b> <span class="muted">the agent's policy code matches Puminun's reference script on all 48 records × 5 snapshots.</span></p>
+      <p style="font-size:14px"><b>Implemented correctly:</b> <span class="muted">the agent's policy code matches Paul's reference script on all 48 records × 5 snapshots.</span></p>
       <p style="font-size:14px"><b>Sensible:</b> <span class="muted">follows CVSS's own guidance (base score ≠ your risk), CISA's "prioritize KEV", and the spirit of CISA's SSVC decision model.</span></p>
       <p style="font-size:14px"><b>A judgment call:</b> <span class="muted">matrix cells and "KEV +1" are our choices, justified one by one in the policy document.</span></p>
       <button class="btn ghost small" onclick="openDoc('rating_policy','Rating policy')">${icon('book')} Open the full policy</button></div>
@@ -437,9 +437,9 @@ function computePg() {
 
 // ---------- 06 tools ----------
 const TOOL_INFO = {
-  lookup_vulnerability: { src: 'NVD CVE API 2.0 (NIST)', mode: 'live', by: 'Puminun · src/sources/nvd.py', out: 'CVSS score + vector, affected products, first fixed build per product, NVD\'s KEV fields', fail: 'Retry once → cached copy (labeled cached) → error, never invented', args: { cve_id: 'CVE-2026-85880' } },
-  lookup_kev: { src: 'CISA KEV JSON feed', mode: 'live', by: 'Puminun · src/sources/kev.py', out: 'Listed or not, date added, due date, required action', fail: 'Retry once → cached feed → error. Not listed ≠ safe', args: { cve_id: 'CVE-2026-85880' } },
-  lookup_environment: { src: 'Northbridge snapshot (JSON file)', mode: 'simulated', by: 'Puminun · src/tools/environment.py', out: 'Machine records, evidence S01–S08, network flows, documented absences, business services (6 actions)', fail: 'Null stays null and is listed as unknown. "Not found" does not prove absence', args: { action: 'search_assets', query: 'Windows Server 2016' } },
+  lookup_vulnerability: { src: 'NVD CVE API 2.0 (NIST)', mode: 'live', by: 'Paul · src/sources/nvd.py', out: 'CVSS score + vector, affected products, first fixed build per product, NVD\'s KEV fields', fail: 'Retry once → cached copy (labeled cached) → error, never invented', args: { cve_id: 'CVE-2026-85880' } },
+  lookup_kev: { src: 'CISA KEV JSON feed', mode: 'live', by: 'Paul · src/sources/kev.py', out: 'Listed or not, date added, due date, required action', fail: 'Retry once → cached feed → error. Not listed ≠ safe', args: { cve_id: 'CVE-2026-85880' } },
+  lookup_environment: { src: 'Northbridge snapshot (JSON file)', mode: 'simulated', by: 'Paul · src/tools/environment.py', out: 'Machine records, evidence S01–S08, network flows, documented absences, business services (6 actions)', fail: 'Null stays null and is listed as unknown. "Not found" does not prove absence', args: { action: 'search_assets', query: 'Windows Server 2016' } },
 };
 async function renderTools(el) {
   const meta = await once('meta', () => api.get('/api/meta'));
@@ -841,11 +841,68 @@ async function renderTests(el) {
 }
 
 // ---------- 11 review ----------
+const SECTION_HELP = {
+  A: ['Main decision: W15', 'Is every fact behind "W15 = High" true in the original sources?'],
+  B: ['Other machines that are not Low', 'Are the Medium and "insufficient evidence" results right?'],
+  C: ['How the agent worked', 'Did the AI really choose its own lookups, use the real sources, and stay blind to the test name?'],
+};
+const fmtVal = (v) => typeof v === 'string' ? `<div style="font-size:14px">${esc(v)}</div>` : `<pre class="json" style="max-height:260px">${esc(JSON.stringify(v, null, 2))}</pre>`;
 async function renderReview(el) {
-  const [rev, bl] = await Promise.all([api.get('/api/doc?name=evidence_review'), api.get('/api/doc?name=baseline')]);
+  const st = await api.get('/api/review');
+  const done = st.items.filter((i) => /^(✅|⚠️)/.test(i.review)).length;
+  const today = new Date().toISOString().slice(0, 10);
+  const groups = ['A', 'B', 'C'].map((g) => [g, st.items.filter((i) => i.id[0] === g)]);
   el.innerHTML = `
-  <div class="card md">${md(rev.text)}</div>
-  <div class="card md" style="margin-top:16px">${md(bl.text)}</div>`;
+  <div class="grid g2">
+    <div class="card"><h3>${icon('usercheck')} What is this?</h3>
+      <p class="muted" style="font-size:14px;margin:0">The assignment requires that <b>a group member checks the agent's answer against the original sources</b>, like a teacher checking homework against the textbook instead of the student's notes.
+      Each card is one claim the agent made. Open its source, compare, then mark it <b>✓ correct</b> or <b>⚠ problem</b>. Your marks are saved into <span class="mono">${esc(st.path)}</span>.</p></div>
+    <div class="card"><h3>${icon('check')} Progress</h3>
+      <div class="row"><div class="big-num">${done}<span class="muted" style="font-size:20px"> / ${st.items.length}</span></div><div style="flex:1"><div style="height:10px;border-radius:6px;background:var(--line);overflow:hidden"><div style="height:100%;width:${(100 * done) / st.items.length}%;background:var(--accent)"></div></div>
+      <div class="muted" style="font-size:12px;margin-top:6px">claims reviewed · the "Pre-check" line on each card is a scripted check done earlier; it does not replace yours</div></div></div></div>
+  </div>
+  ${groups.map(([g, items]) => `
+    <h3 style="margin:22px 0 4px">${g} · ${esc(SECTION_HELP[g][0])}</h3><p class="muted" style="margin:0 0 10px;font-size:14px">${esc(SECTION_HELP[g][1])}</p>
+    <div class="grid" style="gap:10px">${items.map((i) => {
+      const verdict = i.review.startsWith('✅') ? 'ok' : i.review.startsWith('⚠') ? 'issue' : '';
+      const note = i.review.replace(/^(✅|⚠️|☐)\s*/, '');
+      return `<div class="card tight review-card ${verdict}" data-id="${i.id}">
+        <div class="row"><span class="chip mono">${i.id}</span><b style="flex:1">${esc(i.claim.replace(/`/g, ''))}</b>
+          ${verdict === 'ok' ? '<span class="mode mode-ok">✓ correct</span>' : verdict === 'issue' ? '<span class="mode mode-cached">⚠ problem</span>' : '<span class="mode mode-not_found">not reviewed</span>'}</div>
+        <div class="muted" style="font-size:12px;margin:4px 0 0 2px">Pre-check: ${esc(i.precheck.replace(/[`*]/g, ''))}</div>
+        <div class="row" style="margin-top:8px"><button class="btn ghost small src-btn">Show me the source</button>
+          <button class="btn small ok-btn" style="background:var(--low)">✓ Correct</button><button class="btn small issue-btn" style="background:var(--medium)">⚠ Problem</button>
+          <input class="note" placeholder="optional note (what you checked, or what is wrong)" value="${esc(note)}" style="flex:1;min-width:220px">
+          ${verdict ? '<button class="btn ghost small clear-btn">Undo</button>' : ''}</div>
+        <div class="src-box"></div></div>`; }).join('')}</div>`).join('')}
+  <h3 style="margin:22px 0 8px">Sign-off</h3>
+  <div class="card"><table><thead><tr><th>Reviewer</th><th>Date</th><th>Result</th><th></th></tr></thead><tbody>
+    ${st.signoff.map((r, k) => `<tr><td><b>${esc(r.name)}</b></td><td><input type="date" id="so-date-${k}" value="${esc(r.date || today)}"></td>
+      <td><input id="so-res-${k}" style="width:100%" placeholder="e.g. Agree: W15 High is supported; A11 step 3 rejected" value="${esc(r.result)}"></td>
+      <td><button class="btn small" data-so="${k}">Save</button></td></tr>`).join('')}</tbody></table>
+    <p class="muted" style="font-size:12px;margin-bottom:0">${done < st.items.length ? `Review all ${st.items.length} claims before signing.` : 'All claims reviewed. Sign off when you agree.'}</p></div>
+  <div class="card" style="margin-top:16px"><h3>${icon('database')} The baseline (nothing to do here)</h3>
+    <p class="muted" style="font-size:14px">A frozen copy of the final run (inputs, settings, code version and outputs), kept as the "before" photo for Assignment 4. The assignment asks us to save it.</p>
+    <button class="btn ghost small" onclick="openDoc('baseline','Baseline')">${icon('book')} What's inside the baseline</button></div>`;
+
+  const save = async (id, verdict, note) => { await api.post('/api/review/mark', { id, verdict, note }); const y = $('#scene').scrollTop; await renderReview(el); $('#scene').scrollTop = y; };
+  $$('.review-card', el).forEach((c) => {
+    const id = c.dataset.id, note = () => $('.note', c).value;
+    $('.src-btn', c).onclick = async () => {
+      const box = $('.src-box', c);
+      if (box.innerHTML) { box.innerHTML = ''; return; }
+      const r = await api.get(`/api/review/source?id=${id}`);
+      box.innerHTML = `<div class="grid" style="gap:8px;margin-top:10px">${r.sources.map((x) => `<div class="card tight" style="background:var(--bg-2)"><div class="row"><b style="font-size:13px">${esc(x.label)}</b><span class="spacer"></span><span class="mono muted" style="font-size:11px">${esc(x.source)}</span></div>${fmtVal(x.value)}</div>`).join('')}</div>`;
+    };
+    $('.ok-btn', c).onclick = () => save(id, 'ok', note());
+    $('.issue-btn', c).onclick = () => save(id, 'issue', note());
+    $('.clear-btn', c) && ($('.clear-btn', c).onclick = () => save(id, '', ''));
+  });
+  $$('button[data-so]', el).forEach((b) => (b.onclick = async () => {
+    const k = b.dataset.so;
+    await api.post('/api/review/signoff', { name: st.signoff[k].name, date: $(`#so-date-${k}`).value, result: $(`#so-res-${k}`).value });
+    b.textContent = 'Saved ✓';
+  }));
 }
 
 // ---------- 12 limits ----------
@@ -864,7 +921,7 @@ async function renderLimits(el) {
   <div class="grid g4">${items.map((x) => `<div class="card"><h3>${icon(x[0])} ${esc(x[1])}</h3><p class="muted" style="font-size:14px">${esc(x[2])}</p></div>`).join('')}</div>
   <div class="card" style="margin-top:16px"><h3>${icon('sparkles')} Next (Assignment 4)</h3>
     <p class="muted" style="font-size:14px;margin:0">Tracing every model and tool call, evaluating over more CVEs and environments, adding EPSS, and comparing against the frozen baseline in <span class="mono">baseline/</span>.</p></div>
-  <div class="hero" style="margin-top:16px;text-align:center"><h2 style="margin:0">Thank you</h2><p class="muted" style="margin:6px 0 0">Puminun Prommark · Supawich Puengdang · github.com/Puminunp/security-triage-agent</p></div>`;
+  <div class="hero" style="margin-top:16px;text-align:center"><h2 style="margin:0">Thank you</h2><p class="muted" style="margin:6px 0 0">Paul Prommark · Supawich Puengdang · github.com/Puminunp/security-triage-agent</p></div>`;
 }
 
 // ---------- boot ----------

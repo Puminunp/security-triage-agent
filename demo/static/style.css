@@ -264,3 +264,6 @@ svg.dg { width: 100%; height: auto; display: block; }
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #2b3858; border-radius: 8px; }
+
+.review-card.ok { border-left: 4px solid var(--low); }
+.review-card.issue { border-left: 4px solid var(--medium); }

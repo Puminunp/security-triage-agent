@@ -2,7 +2,7 @@
 
 The assignment requires that **a group member verifies the assessment and its cited evidence**. This checklist is for the main run in `baseline/main_run/` (run `20261012T185021Z_check0`, the same run as check 0 in `docs/test_results.md`). Tool refs (R#) below refer to that run.
 
-How to review: open `baseline/main_run/report.md` next to `baseline/main_run/tool_results.json`, then check each line against the **primary source** named in the "Check against" column, not against the agent's own text. Tick each box, or write what is wrong.
+How to review: the easiest way is scene 11 of the demo app (`python -m demo`). It shows each claim next to excerpts of its primary sources, and saves your ✅ / ⚠️ marks and notes into this file. Without the app, open `baseline/main_run/report.md` next to `baseline/main_run/tool_results.json` and check each line against the **primary source** named in the "Check against" column, not against the agent's own text.
 
 The "Pre-check" column was filled in by a scripted cross-check (Claude, while preparing the repo). It compares the saved assessment with the raw files. **It does not replace the human review below.**
 
@@ -11,7 +11,7 @@ The "Pre-check" column was filled in by a scripted cross-check (Claude, while pr
 | # | Claim in the assessment | Check against | Pre-check | Reviewer ✔ / note |
 |---|---|---|---|---|
 | A1 | W15 runs Windows Server 2016, build 10.0.14393.9339 | `environment/northbridge-v1.1.json` assets[17] `os` and evidence S08 line "W15: ..." | Matches: assets[17] `os.build` 10.0.14393.9339, KB5099535; S08 line identical (cited R3, R12) | ☐ |
-| A2 | First fixed build for Server 2016 is 10.0.14393.9512 | `inputs/CVE-2026-85880_nvd_raw.json` cpeMatch `windows_server_2016` `versionEndExcluding` (and the MSRC page, T3) | Matches: NVD raw cpeMatch `windows_server_2016` versionEndExcluding 10.0.14393.9512 (R1). MSRC page (T3) not saved yet: **to do** | ☐ |
+| A2 | First fixed build for Server 2016 is 10.0.14393.9512 | `inputs/CVE-2026-85880_nvd_raw.json` cpeMatch `windows_server_2016` `versionEndExcluding` (and the MSRC page, T3) | Matches: NVD raw cpeMatch `windows_server_2016` versionEndExcluding 10.0.14393.9512 (R1). MSRC page (T3, `inputs/CVE-2026-85880_msrc.pdf`) also lists 10.0.14393.9512 for Windows Server 2016 | ☐ |
 | A3 | 9339 < 9512, so the build is vulnerable | Numeric comparison | Matches: 9339 < 9512 (same first three parts) | ☐ |
 | A4 | A low-privilege local access path exists (payroll operators, `svc_finlegacy`) | assets[17] `low_priv_local_access`, `notes`; S03; assumption A15 in `environment/CHANGES.md` | Matches: `low_priv_local_access: true`; notes say payroll operators (non-admin) log on; A15 in CHANGES.md (R3, R8, R11). This is a group assumption, hence confidence Medium | ☐ |
 | A5 | Restricted PII, protection undocumented, reachable from USERS → P1 | assets[17] `data_classification`, `data_protection`, `exposure`; A2, A6; flow F07 | Matches: restricted_pii / unprotected / intranet → `pii_unprotected x intranet` = P1 | ☐ |
@@ -38,13 +38,13 @@ The "Pre-check" column was filled in by a scripted cross-check (Claude, while pr
 | C1 | The model chose the tools and queries itself (`messages.json` / `trace.jsonl`) | 15 tool calls chosen by the model (queries such as "Windows Server 2016", "Windows 10"); 1 invalid call (`limit: "invalid"`) rejected, then corrected | ☐ |
 | C2 | The environment lookup and the external lookups (NVD, KEV) both ran and were used | Yes: R1 NVD, R2 KEV, R3–R15 environment | ☐ |
 | C3 | The model did not see the snapshot's real name (blinding) | Yes: `messages.json` contains no `northbridge-v1.1.json` / snapshot ID | ☐ |
-| C4 | The assessment output matches the group consensus in `docs/expected_results.md` section 1 | Output High = proposed consensus High; members still need to tick section 1 of expected_results.md | ☐ |
+| C4 | The assessment output matches the group consensus in `docs/expected_results.md` section 1 | Output High = consensus High (section 1 of expected_results.md ticked 2026-10-14) | ☐ |
 
 ## Sign-off
 
 | Reviewer | Date | Result (agree / disagree, with reason) |
 |---|---|---|
-| Puminun Prommark | | |
+| Paul Prommark | | |
 | Supawich Puengdang | | |
 
-After signing, set `human_review` in `baseline/main_run/assessment.json` to `{"status": "reviewed", "reviewer": "...", "date": "..."}` and commit.
+The signed table above is the record of the human review. The baseline files stay frozen, so `human_review.status` inside `baseline/main_run/assessment.json` keeps its original value `pending`.

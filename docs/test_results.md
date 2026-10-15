@@ -81,7 +81,7 @@ Windows Server 2012 and 2019 were searched (no match) and are on the snapshot's 
 
 ## 5. Comparison with the group consensus
 
-`docs/expected_results.md` section 1 proposes **High** for W15. The live output is **High**, by rule `P1 x High = High; KEV +1 -> High`, which matches the policy. The group still has to tick "Agree" there; the box is left for the members to fill in.
+`docs/expected_results.md` section 1 proposes **High** for W15. The live output is **High**, by rule `P1 x High = High; KEV +1 -> High`, which matches the policy. Both members ticked "Agree: High" there on 2026-10-14. The expected rating itself was written on 2026-10-11, before the agent existed.
 
 ## 6. Observations from development runs
 
@@ -103,6 +103,6 @@ These runs were made before the final code and are not part of the results above
 - **Coverage is measured against the snapshot.** A product named differently in the inventory could be missed (plain-text `search_assets`).
 - **Conflict detection in code is narrow.** It catches a differing build statement in an evidence record. Other disagreements depend on the model reporting them.
 - **The live invalid-tool failure is injected,** not produced by the model on its own. The 3-rejection stop is shown offline.
-- **Sources.** CVSS v3.1 only (Microsoft CNA score; NVD has no primary score). No EPSS. The MSRC advisory (T3) is not fetched. A cached KEV feed may be out of date.
+- **Sources.** CVSS v3.1 only (Microsoft CNA score; NVD has no primary score). No EPSS. The MSRC advisory (T3) is not fetched by the agent; it was saved by hand and its fixed builds match NVD. A cached KEV feed may be out of date.
 - **Free-tier model service.** Ollama Cloud availability affects run time; a long outage stops the run without a rating.
 - **No action is executed.** The agent only recommends; patching and access changes are left to people.

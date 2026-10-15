@@ -308,6 +308,10 @@ class Handler(BaseHTTPRequestHandler):
                     return self._send(200, live_tool(q["id"], q["ref"]))
                 if p == "/api/checks":
                     return self._send(200, checks())
+                if p == "/api/review":
+                    return self._send(200, review_state())
+                if p == "/api/review/source":
+                    return self._send(200, review_sources(q["id"]))
                 if p == "/api/doc":
                     name = q.get("name")
                     if name not in DOCS:
@@ -324,6 +328,10 @@ class Handler(BaseHTTPRequestHandler):
                     return self._send(200, start_live(body))
                 if p == "/api/pytest":
                     return self._send(200, run_pytest())
+                if p == "/api/review/mark":
+                    return self._send(200, review_mark(body))
+                if p == "/api/review/signoff":
+                    return self._send(200, review_signoff(body))
             return self._send(404, {"error": "not found"})
         except (KeyError, ValueError, OSError) as exc:
             return self._send(400, {"error": f"{type(exc).__name__}: {exc}"})
@@ -342,3 +350,148 @@ def main(port=8765):
         server.serve_forever()
     except KeyboardInterrupt:
         pass
+
+
+# --- evidence review (scene 11) ------------------------------------------------
+
+REVIEW_DOC = REPO_ROOT / "docs" / "evidence_review.md"
+ROW = re.compile(r"^\| ([ABC]\d+) \|(.*)\|\s*$")
+
+
+def _cells(line):
+    return [c.strip() for c in line.strip().strip("|").split("|")]
+
+
+def review_state():
+    items, signoff, section = [], [], None
+    for line in REVIEW_DOC.read_text(encoding="utf-8").splitlines():
+        if line.startswith("## "):
+            section = line[3:].strip()
+        m = ROW.match(line)
+        if m:
+            c = _cells(line)
+            if len(c) == 5:
+                items.append({"id": c[0], "section": section, "claim": c[1], "check": c[2], "precheck": c[3], "review": c[4]})
+            else:
+                items.append({"id": c[0], "section": section, "claim": c[1], "check": "", "precheck": c[2], "review": c[3]})
+        elif section == "Sign-off" and line.startswith("| ") and not line.startswith(("| Reviewer", "|---")):
+            c = _cells(line)
+            signoff.append({"name": c[0], "date": c[1], "result": c[2]})
+    return {"path": "docs/evidence_review.md", "items": items, "signoff": signoff}
+
+
+def _clean(text):
+    return " ".join(str(text).replace("|", "/").split())
+
+
+def review_mark(body):
+    rid, verdict, note = body.get("id"), body.get("verdict"), _clean(body.get("note", ""))
+    mark = {"ok": "✅", "issue": "⚠️", "": "☐"}.get(verdict)
+    if mark is None or not re.fullmatch(r"[ABC]\d+", str(rid)):
+        raise ValueError("bad review update")
+    cell = f"{mark} {note}".strip()
+    lines = REVIEW_DOC.read_text(encoding="utf-8").splitlines()
+    for i, line in enumerate(lines):
+        if line.startswith(f"| {rid} |"):
+            c = _cells(line)
+            c[-1] = cell
+            lines[i] = "| " + " | ".join(c) + " |"
+            REVIEW_DOC.write_text("\n".join(lines) + "\n", encoding="utf-8")
+            return review_state()
+    raise KeyError(rid)
+
+
+def review_signoff(body):
+    name = _clean(body.get("name", ""))
+    date, result = _clean(body.get("date", "")), _clean(body.get("result", ""))
+    lines = REVIEW_DOC.read_text(encoding="utf-8").splitlines()
+    for i, line in enumerate(lines):
+        if line.startswith(f"| {name} |"):
+            lines[i] = f"| {name} | {date} | {result} |"
+            REVIEW_DOC.write_text("\n".join(lines) + "\n", encoding="utf-8")
+            return review_state()
+    raise KeyError(name)
+
+
+def review_sources(rid):
+    snap = read_json(SNAPSHOTS[0]["path"])
+    assets = snap["assets"]
+    loc = {f"{a['asset_id']} {a['instance']}": (i, a) for i, a in enumerate(assets)}
+    ev = {e["evidence_id"]: (i, e) for i, e in enumerate(snap["evidence"])}
+    f = "northbridge-v1.1.json"
+    base = read_json("baseline/main_run/assessment.json")
+    by = {f"{x['asset']['asset_id']} {x['asset']['instance']}": x for x in base["assessments"]}
+    w15i, w15 = loc["W15 FINLEG01-FINLEG02"]
+    bw = by["W15 FINLEG01-FINLEG02"]
+    cve = read_json(f"inputs/{CVE}_nvd_raw.json")["vulnerabilities"][0]["cve"]
+    cpe = [m for c in cve["configurations"] for n in c["nodes"] for m in n["cpeMatch"]]
+    kev = read_json(f"inputs/{CVE}_kev_raw.json")
+    msrc = (REPO_ROOT / f"inputs/{CVE}_msrc_builds.txt").read_text(encoding="utf-8").splitlines()
+    changes = (REPO_ROOT / "environment/CHANGES.md").read_text(encoding="utf-8").splitlines()
+    tools = read_json("baseline/main_run/tool_results.json")
+    messages_text = (REPO_ROOT / "baseline/main_run/messages.json").read_text(encoding="utf-8")
+    s08 = ev["S08"][1]["facts"]
+    assumption = lambda *ids: [l for l in changes if any(l.startswith(f"| {a} |") for a in ids)]
+    agent = lambda key: {"decision": by[key]["decision"], "rule": by[key]["rationale"]["policy_rule"],
+                         "applicability": by[key]["rationale"]["applicability"]["reason"]}
+    srv22 = {k: a["os"]["build"] for k, (i, a) in loc.items() if a["os"].get("name") == "Windows Server 2022"}
+    S = lambda label, source, value: {"label": label, "source": source, "value": value}
+    table = {
+        "A1": [S("Asset record: W15 operating system", f"{f}#assets[{w15i}].os", w15["os"]),
+               S("Evidence S08, the W15 line", f"{f}#evidence[{ev['S08'][0]}]", [x for x in s08 if x.startswith("W15")]),
+               S("What the agent reported", "baseline/main_run/assessment.json", bw["rationale"]["applicability"]["facts"]["os_build"])],
+        "A2": [S("NVD: rows for windows_server_2016", f"inputs/{CVE}_nvd_raw.json → configurations",
+                 [{"criteria": m["criteria"], "versionEndExcluding": m.get("versionEndExcluding")} for m in cpe if "windows_server_2016" in m["criteria"]]),
+               S("Microsoft (MSRC) page", f"inputs/{CVE}_msrc_builds.txt (full page: inputs/{CVE}_msrc.pdf)", [l for l in msrc if "Server 2016" in l]),
+               S("What the agent reported", "baseline/main_run/assessment.json", bw["rationale"]["applicability"]["facts"]["fixed_build"])],
+        "A3": [S("Compare part by part", "code (src/policy.py build_tuple)",
+                 f"{w15['os']['build']} vs {bw['rationale']['applicability']['facts']['fixed_build']}: the first three parts are equal (10.0.14393), and 9339 < 9512, so the build is below the fix → vulnerable")],
+        "A4": [S("Asset record: access", f"{f}#assets[{w15i}]", {"low_priv_local_access": w15["low_priv_local_access"], "notes": w15["notes"]}),
+               S("Evidence S03 (course scenario)", f"{f}#evidence[{ev['S03'][0]}]", [x for x in ev["S03"][1]["facts"] if "W15" in x]),
+               S("Group assumption A15", "environment/CHANGES.md", assumption("A15"))],
+        "A5": [S("Asset record: data and exposure", f"{f}#assets[{w15i}]", {k: w15[k] for k in ("data_classification", "data_protection", "exposure")}),
+               S("Network flow F07", f"{f}#flows", [x for x in snap["flows"] if x["flow_id"] == "F07"]),
+               S("Group assumptions A2 and A6", "environment/CHANGES.md", assumption("A2", "A6")),
+               S("Policy priority matrix", "docs/rating_policy.md section 3", "PII without protection × Intranet = P1")],
+        "A6": [S("NVD CVSS v3.1 entries", f"inputs/{CVE}_nvd_raw.json → metrics.cvssMetricV31",
+                 [{"type": m["type"], "source": m["source"], "baseScore": m["cvssData"]["baseScore"], "vector": m["cvssData"]["vectorString"]} for m in cve["metrics"]["cvssMetricV31"]]),
+               S("Microsoft (MSRC) page", f"inputs/{CVE}_msrc.pdf, page 1", "CVSS:3.1 7.8 / 7.2 (base 7.8), CVSS source: Microsoft"),
+               S("Policy severity bands", "docs/rating_policy.md section 4", "7.0–8.9 = High")],
+        "A7": [S("CISA KEV entry", f"inputs/{CVE}_kev_raw.json", {k: kev.get(k) for k in ("cveID", "dateAdded", "dueDate", "knownRansomwareCampaignUse", "requiredAction")})],
+        "A8": [S("Rule the agent applied", "baseline/main_run/assessment.json", bw["rationale"]["policy_rule"]),
+               S("Policy final matrix", "docs/rating_policy.md section 5", "P1 × High = High"),
+               S("Policy modifiers", "docs/rating_policy.md section 6", "KEV +1 level, never above High")],
+        "A9": [S("Confidence the agent reported", "baseline/main_run/assessment.json", bw["confidence"]),
+               S("Policy confidence rule", "docs/rating_policy.md section 7", "Medium when a decisive fact depends on a group assumption or simulated addition (S07, S08)")],
+        "A10": [S("Citations in the assessment", "baseline/main_run/assessment.json",
+                  [{"ref": e["ref"], "tool": e["tool"], "source": e["source"], "mode": e["source_mode"], "retrieved_at": e["retrieved_at"]} for e in bw["evidence"]])],
+        "A11": [S("Recommended action (written by the AI)", "baseline/main_run/assessment.json", bw["action"]),
+                S("The field step 3 is based on", f"{f}#assets[{w15i}].config", {"patch_approval_recorded_days_before_snapshot": w15["config"]["patch_approval_recorded_days_before_snapshot"]}),
+                S("What that field really means (S03)", f"{f}#evidence[{ev['S03'][0]}]", [x for x in ev["S03"][1]["facts"] if "patch approval" in x])],
+        "B1": [S("Asset record: CA-ROOT01", f"{f}#assets[{loc['W02 CA-ROOT01'][0]}]",
+                 {k: loc["W02 CA-ROOT01"][1][k] for k in ("os", "exposure", "low_priv_local_access", "priority_override")}),
+               S("Evidence S08", f"{f}#evidence[{ev['S08'][0]}]", [x for x in s08 if "root CA" in x]),
+               S("What the agent decided", "baseline/main_run/assessment.json", agent("W02 CA-ROOT01"))],
+        "B2": [S("Asset record: E02 stale sensors", f"{f}#assets[{loc['E02 Legacy workstations (stale sensors)'][0]}]",
+                 loc["E02 Legacy workstations (stale sensors)"][1]["os"]),
+               S("Evidence S08", f"{f}#evidence[{ev['S08'][0]}]", [x for x in s08 if x.startswith("E02")]),
+               S("What the agent decided", "baseline/main_run/assessment.json", agent("E02 Legacy workstations (stale sensors)"))],
+        "B3": [S("Windows Server 2022 builds in the snapshot", f"{f}#assets", srv22),
+               S("Fixed build for Server 2022 (NVD)", f"inputs/{CVE}_nvd_raw.json", [m.get("versionEndExcluding") for m in cpe if "windows_server_2022" in m["criteria"]]),
+               S("What the agent decided", "baseline/main_run/assessment.json", {k: by[k]["decision"] for k in srv22 if k in by})],
+        "B4": [S("Products the company documents it does NOT use", f"{f}#absences", snap["absences"]),
+               S("The agent's searches", "baseline/main_run/tool_results.json",
+                 [{"ref": t["ref"], "args": t["args"], "status": t["result"]["status"]} for t in tools if t["args"].get("action") == "search_assets"])],
+        "C1": [S("Every tool call the model chose", "baseline/main_run/tool_results.json",
+                 [f"{t['ref']} {t['tool']} {json.dumps(t['args'])}" + (" → REJECTED" if str(t['result'].get('error') or '').startswith(('unknown tool', 'invalid arguments')) else "") for t in tools])],
+        "C2": [S("External and environment lookups", "baseline/main_run/tool_results.json",
+                 [f"{t['ref']} {t['tool']} → {t['result']['status']} ({t['result'].get('source_mode')})" for t in tools])],
+        "C3": [S("Times the real snapshot name appears in what the model saw", "baseline/main_run/messages.json",
+                 {"northbridge-v1.1.json": messages_text.count("northbridge-v1.1.json"), "snapshot.json (blinded name)": messages_text.count("snapshot.json")})],
+        "C4": [S("Group consensus", "docs/expected_results.md section 1",
+                 [l for l in (REPO_ROOT / "docs/expected_results.md").read_text(encoding="utf-8").splitlines() if l.startswith(("| Proposed rating", "| Group consensus"))]),
+               S("What the agent decided for W15", "baseline/main_run/assessment.json", bw["decision"])],
+    }
+    if rid not in table:
+        raise KeyError(rid)
+    return {"id": rid, "sources": table[rid]}

@@ -22,7 +22,7 @@
 |---|---|---|---|---|
 | T1 | NVD CVE record (API 2.0) | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85880 | 2026-10-11 | `CVE-2026-85880_nvd_summary.json` |
 | T2 | CISA KEV catalog entry | https://www.cisa.gov/known-exploited-vulnerabilities-catalog | 2026-10-11 | `CVE-2026-85880_kev_entry.json` |
-| T3 | Microsoft Security Update Guide | https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-85880 | to be saved (page needs JavaScript; save as PDF from a browser) | `CVE-2026-85880_msrc.pdf` |
+| T3 | Microsoft Security Update Guide | https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-85880 | 2026-10-14 (page needs JavaScript; printed to PDF with headless Chrome) | `CVE-2026-85880_msrc.pdf`, product/build list in `CVE-2026-85880_msrc_builds.txt` |
 | T4 | Patch Tuesday summary (secondary, for context only) | https://aicybr.com/blog/microsoft-september-2026-patch-tuesday-zero-days | 2026-10-11 | not needed |
 | E1 | Northbridge Windows Enterprise Environment v1.0 (course-supplied) | Canvas | 2026-10-10 | original kept unchanged |
 
@@ -32,7 +32,7 @@ The two JSON files in this folder were **transcribed** from the NVD record using
 
 1. Person B runs the NVD client and saves the **raw** API response as `CVE-2026-85880_nvd_raw.json`.
 2. Person B saves the matching **raw** KEV feed entry as `CVE-2026-85880_kev_raw.json`.
-3. Someone opens the MSRC page in a browser and saves it as a PDF.
+3. ~~Someone opens the MSRC page in a browser and saves it as a PDF.~~ Done 2026-10-14. Every fixed build on the MSRC page matches NVD's `versionEndExcluding` values and `docs/threat_prerequisites.md` (including Server 2012 / 2012 R2, which NVD leaves blank). MSRC also confirms CVSS 7.8 and "Exploited: Yes".
 4. Compare the raw files with the transcribed ones. If anything differs, the raw files win, and the difference is noted here.
 
 ## Key facts used by the policy
