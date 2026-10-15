@@ -82,18 +82,18 @@ const SCENES = [
     notes: ['This panel calls the real policy code, the same function the agent uses.', 'W15 with the base facts comes out High: P1 times High is High, and KEV adds one level but it\'s already at the cap.', 'Patch it, which is check 1, and it drops to Low. Make it hold no personal data and sit internal only, which is check 2, and it becomes Medium.', 'Remove the build number, or let two sources disagree, and the answer is INSUFFICIENT EVIDENCE. The policy never guesses.', 'The offline root CA is vulnerable, but it\'s powered off and nobody can log on, so it only partly applies: Medium.'] },
   { id: 'tools', part: 1, icon: 'wrench', kicker: 'Tools', title: 'What the agent can call', render: renderTools,
     notes: ['An AI model can only write text. A tool call means the AI writes a request, our Python code runs it, and the result goes back to the AI.', 'I wrote three lookup tools from scratch: NVD, KEV and the company inventory. Every result says where it came from, when, and whether it\'s live, cached or simulated.', 'Try it runs the real tool right now. If NVD is down, the tool retries once, then uses a cached copy and labels it as cached.', 'And if the AI asks for a tool that doesn\'t exist, the call is rejected before anything runs. Now Supawich will show how the agent uses these tools.'] },
-  { id: 'architecture', part: 2, icon: 'workflow', kicker: 'Design', title: 'How the agent works', render: renderArchitecture,
-    notes: ['Thanks Paul. Here is how the agent fits together. Purple is the AI, blue is code, green is tools, orange is a person.', 'Inside the loop, the AI chooses which tool to call and what query to use. Code checks and runs the call and records the result in an evidence ledger, then the AI sees the result and decides the next step.', 'When the AI is done, it submits its facts. The validator checks every fact against what the tools actually returned. Then policy code decides the rating, so the AI never picks it.', 'The red paths show where the system stops instead of guessing. Let me animate one run.'] },
-  { id: 'live', part: 2, icon: 'play', kicker: 'Demonstration', title: 'Complete run', render: renderLive,
-    notes: ['Now a real run: the real AI model on Ollama Cloud, live NVD and KEV data, and the company snapshot. I press Run.', 'Each card is one step. Here the model decides to look up the CVE, then to search the inventory for Windows Server 2016. Those queries are the model\'s own decisions.', 'Clicking a tool card shows the exact data that came back.', 'Here is the validator: the model\'s first answer was incomplete, so code sent the gaps back, and the model fixed them.', 'Final result: W15 is High, the offline root CA is Medium, 12 laptops with unknown patch levels need human review, and 20 machines are Low. Click W15: every fact has a source, the rule that fired, assumptions, unknowns and a recommended action.'] },
-  { id: 'validator', part: 2, icon: 'check', kicker: 'Output validation', title: 'The validator: trust, but verify', render: renderValidator,
-    notes: ['The validator is our \'trust, but verify\' step. Six checks, all against the tool results, never against the AI\'s own text.', 'In the baseline run, the AI\'s first submission forgot to fetch some evidence. The validator sent that back, and the second attempt passed.', 'In all 7 live check runs, the first submission had gaps. All were caught and fixed. For a triage tool, a forgotten server is the worst possible failure.'] },
-  { id: 'tests', part: 2, icon: 'flask', kicker: 'Testing', title: 'Expected vs actual', render: renderTests,
-    notes: ['We wrote the expected results from the policy before running anything.', 'The three required checks: change only applicability and we get Low; change only impact and we get Medium; missing or conflicting evidence gives insufficient evidence. All match.', 'Controlled failures: NVD down with a cache still gives High at Medium confidence. NVD down with no cache stops and names the failed lookup. A fake tool is rejected and the run continues.', 'Replay opens any of these runs. We also have 112 offline tests, and I\'ll run them now.'] },
-  { id: 'review', part: 2, icon: 'usercheck', kicker: 'Human review', title: 'Human review of the evidence', render: renderReview,
-    notes: ['The assignment requires a group member to check the agent\'s answer against the original sources.', 'Each card is one claim. I open its source: for example W15\'s build in the company file, and the fixed build in the raw NVD record and on Microsoft\'s own page. They match, so I mark it correct.', 'One thing we flagged: the AI-written action had a wrong step 3, so we marked it as a problem. That shows the review is real.', 'Both of us signed off at the bottom. The baseline is a frozen copy of this run for Assignment 4.'] },
-  { id: 'limits', part: 2, icon: 'alert', kicker: 'Wrap-up', title: 'Limitations and next steps', render: renderLimits,
-    notes: ['Limitations: the environment is simulated, so real use needs real inventory data. The AI isn\'t deterministic, but the ratings were stable because code computes them. Conflict detection is narrow, and the free model service sometimes fails.', 'Next, in Assignment 4: tracing every call, evaluating over more CVEs, and comparing against this baseline. Thank you.'] },
+  { id: 'architecture', part: 2, story: "<b>Where we are:</b> Paul showed the ingredients: the bug, the company, the rulebook and the tools. Now: how an AI uses them, and why we never take its word for anything.", icon: 'workflow', kicker: 'Design', title: 'How the agent works', render: renderArchitecture,
+    notes: ['Thanks Paul: ingredients done, now the AI that uses them, and how we trust it', 'The AI is like an intern: good at deciding WHAT to look up (press Animate a run)', 'The loop: the AI asks, a tool answers, the AI decides the next step', 'We don\'t take its word: the validator checks every fact against the tool results', 'The rulebook, not the AI, picks the rating (Paul\'s clip said the opposite; correct it gently)', 'A human signs off; the red boxes mean \'stop instead of guess\''] },
+  { id: 'live', part: 2, story: "<b>One real run, start to finish.</b> We give the agent only the bug ID and watch what it decides to do. <span style='color:#c4a7ff'>Purple</span> = the AI deciding · <span style='color:var(--low)'>green</span> = a tool answering · <span style='color:var(--medium)'>orange</span> = code checking the AI's work.", icon: 'play', kicker: 'Demonstration', title: 'Complete run', render: renderLive,
+    notes: ['Only input: the bug ID. Real AI on Ollama Cloud, live NVD and CISA data', 'Purple = the AI decides; green = a tool answers (click one to show the real data)', 'It chose to search \'Windows Server 2016\' on its own, from the NVD answer', 'Orange validator card: the first answer gets sent back; it fixes it (come back to this in scene 9)', 'Bottom line: 1 patch now (W15), 1 plan (root CA, switched off), 12 laptops unknown so a person checks, 20 fine', 'Click W15: why it\'s High, where each fact came from, assumptions, what to do', 'Then: Controlled failure = \'NVD unreachable, no cache\' → it stops in seconds, says insufficient evidence, names the failed lookup. \'I don\'t know\' beats a confident wrong answer'] },
+  { id: 'validator', part: 2, story: "<b>Why we don't trust the AI:</b> its first answer was incomplete in every run. This is the check that catches it.", icon: 'check', kicker: 'Output validation', title: 'The validator: trust, but verify', render: renderValidator,
+    notes: ['The AI\'s first answer was incomplete in every live run (forgot servers, skipped Windows 10)', 'Worst mistake in security: a machine you forgot to check looks the same as a safe one', '6 checks, all against what the tools really returned', '2 chances to fix; otherwise that machine is \'insufficient evidence\', never a silent \'Low\''] },
+  { id: 'tests', part: 2, story: "<b>Does it work beyond one case?</b> We wrote down the expected answers first, then changed one thing at a time and compared.", icon: 'flask', kicker: 'Testing', title: 'Expected vs actual', render: renderTests,
+    notes: ['Like an experiment: expected answers written down first, then change one thing at a time', 'Patched → Low ✓ · no personal data, internal only → Medium ✓ · missing or conflicting → \'not sure\' ✓', 'Broke it on purpose: NVD down with and without a saved copy, fake tool → all as predicted', 'Press Run python -m pytest: 119 automatic tests, no internet needed'] },
+  { id: 'review', part: 2, story: "<b>The last check is a person.</b> We compared every claim behind the W15 rating with the original sources.", icon: 'usercheck', kicker: 'Human review', title: 'Human review of the evidence', render: renderReview,
+    notes: ['The last check is a person: every claim compared with the original sources', 'Open A1, then A2: build 9339 in two company records and in the AI\'s answer; fix 9512 per NVD and Microsoft → vulnerable', '18 of 19 confirmed; A11 flagged: a wrong step in the AI\'s advice (the rating is unaffected, code decides it)', 'That\'s why a human signs off before anyone acts'] },
+  { id: 'limits', part: 2, story: "<b>Being honest:</b> what this can't do yet, and what comes next.", icon: 'alert', kicker: 'Wrap-up', title: 'Limitations and next steps', render: renderLimits,
+    notes: ['Fictional company → real use needs a real inventory', 'The AI\'s steps vary between runs, the ratings didn\'t (code decides)', 'The \'can it work here\' check is written for this bug type (needs a user account); internet-facing bugs need a different check', 'Free AI service is flaky → retry, stop cleanly', 'Answer to the opening question: yes, but only W15, patch it now. AI investigates, code checks and decides, a human signs. Thank you'] },
 ];
 
 let current = 0;
@@ -125,6 +125,9 @@ async function go(i) {
   $('#scene-narrator').innerHTML = `<span class="muted">${t.role} · narrated by</span> <b>${t.name}</b> <span class="avatar" style="background:${t.color}">${t.short}</span>`;
   $('#notes-body').innerHTML = `<ul>${s.notes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>`;
   updatePresenter();
+  const story = $('#scene-story');
+  story.innerHTML = s.story || '';
+  story.classList.toggle('hidden', !s.story);
   $('#prev').disabled = current === 0;
   $('#next').disabled = current === SCENES.length - 1;
   const el = $('#scene');
@@ -744,11 +747,24 @@ function renderResults(run, ctx) {
     <div class="row"><span class="muted">Overall</span>${dec(o.decision)}<span class="chip">${esc(a.run.status)}</span></div>
     <p class="muted" style="font-size:13px">${esc(o.note)}</p>
     <div class="row">${Object.entries(o.counts || {}).map(([d, c]) => `<span class="chip">${c} × ${dec(d)}</span>`).join('')}</div>
+    ${bottomLine(a)}
     <div class="res-assets">${a.assessments.map((x, i) => x.decision === 'Low' ? '' : `<div class="res-asset" data-i="${i}"><span><b class="mono">${esc(x.asset.asset_id)}</b> ${esc(x.asset.instance)}</span>${dec(x.decision)}</div>`).join('')}
       ${a.assessments.length > nonLow.length ? `<details><summary>${a.assessments.length - nonLow.length} machines rated Low</summary>${a.assessments.map((x, i) => x.decision !== 'Low' ? '' : `<div class="res-asset" data-i="${i}" style="margin-top:6px"><span><b class="mono">${esc(x.asset.asset_id)}</b> ${esc(x.asset.instance)}</span>${dec('Low')}</div>`).join('')}</details>` : ''}</div>
     <div class="row" style="margin-top:12px"><button class="btn ghost small" id="open-report">${icon('book')} Full report</button><span class="muted mono" style="font-size:11px">${esc(run.path)}</span></div>`;
   $$('.res-asset', box).forEach((n) => (n.onclick = () => assetResult(a.assessments[+n.dataset.i], ctx)));
   $('#open-report').onclick = () => modal('report.md', `<div class="md">${md(run.report)}</div>`);
+}
+
+function bottomLine(a) {
+  if (!a.assessments.length) return '';
+  const names = (d) => a.assessments.filter((x) => x.decision === d).map((x) => `${x.asset.asset_id} ${x.asset.instance}`);
+  const row = (d, label, text) => `<div class="bl-row" style="border-color:${DEC_COLOR[d]}"><b style="color:${DEC_COLOR[d]}">${label}</b><br>${esc(text)}</div>`;
+  const low = names('Low').length;
+  return `<div class="bottom-line"><b>Bottom line</b>
+    ${names('High').length ? row('High', 'Patch now', names('High').join(', ')) : ''}
+    ${names('Medium').length ? row('Medium', 'Plan the fix', names('Medium').join(', ')) : ''}
+    ${names('INSUFFICIENT_EVIDENCE').length ? row('INSUFFICIENT_EVIDENCE', 'A person must check first', names('INSUFFICIENT_EVIDENCE').join(', ')) : ''}
+    ${low ? row('Low', 'Not at risk from this bug', `${low} machines (already patched or not affected)`) : ''}</div>`;
 }
 
 function assetResult(x, ctx) {
@@ -913,12 +929,13 @@ async function renderLimits(el) {
     ['database', 'Coverage depends on naming', 'Searches are plain text; a product named differently in the inventory could be missed.'],
     ['alert', 'Narrow conflict detection', 'Code catches a different build stated for the same machine; other disagreements depend on the AI reporting them.'],
     ['check', 'Validator partly redundant here', 'On this clean inventory, code can recompute most facts itself. Its essential job is completeness: catching forgotten machines.'],
-    ['siren', 'Sources', 'CVSS v3.1 only (Microsoft\'s score), no EPSS, the Microsoft advisory page is not fetched, a cached KEV feed can be stale.'],
+    ['siren', 'Sources', 'CVSS v3.1 only (Microsoft\'s score), no EPSS, the Microsoft advisory is only saved by hand (the agent cannot read that page), a cached KEV feed can be stale.'],
     ['gauge', 'Free-tier model service', 'Ollama Cloud returned intermittent HTTP 500s; we retry with backoff and stop cleanly if it stays down.'],
     ['usercheck', 'Recommends only', 'The agent never patches or changes access. People act on its report after review.'],
+    ['bug', 'Written for this kind of bug', 'The "can it work here" check assumes the attacker needs a normal user account on the machine. A bug attackable straight from the internet needs a different check (e.g. internet exposure).'],
   ];
   el.innerHTML = `
-  <div class="grid g4">${items.map((x) => `<div class="card"><h3>${icon(x[0])} ${esc(x[1])}</h3><p class="muted" style="font-size:14px">${esc(x[2])}</p></div>`).join('')}</div>
+  <div class="grid g3">${items.map((x) => `<div class="card"><h3>${icon(x[0])} ${esc(x[1])}</h3><p class="muted" style="font-size:14px">${esc(x[2])}</p></div>`).join('')}</div>
   <div class="card" style="margin-top:16px"><h3>${icon('sparkles')} Next (Assignment 4)</h3>
     <p class="muted" style="font-size:14px;margin:0">Tracing every model and tool call, evaluating over more CVEs and environments, adding EPSS, and comparing against the frozen baseline in <span class="mono">baseline/</span>.</p></div>
   <div class="hero" style="margin-top:16px;text-align:center"><h2 style="margin:0">Thank you</h2><p class="muted" style="margin:6px 0 0">Paul Prommark · Supawich Puengdang · github.com/Puminunp/security-triage-agent</p></div>`;

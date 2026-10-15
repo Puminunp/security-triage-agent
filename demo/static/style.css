@@ -267,3 +267,8 @@ svg.dg { width: 100%; height: auto; display: block; }
 
 .review-card.ok { border-left: 4px solid var(--low); }
 .review-card.issue { border-left: 4px solid var(--medium); }
+
+#scene-story { margin: 0 34px 12px; padding: 10px 16px; border-radius: 12px; background: linear-gradient(90deg, rgba(122,162,255,.16), rgba(79,209,197,.06)); border: 1px solid rgba(122,162,255,.35); font-size: 15px; }
+#scene-story b { color: var(--accent); }
+.bottom-line { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: var(--bg-2); border: 1px solid var(--line); font-size: 14px; }
+.bottom-line .bl-row { margin: 8px 0 0; padding: 2px 0 2px 10px; border-left: 3px solid; font-size: 13px; }
