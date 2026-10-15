@@ -11,6 +11,17 @@ An agentic cyber threat intelligence (CTI) risk-triage system that rates a CVE a
 
 Both members: consensus rating, review of the final assessment and its citations, video demo.
 
+## Video demo
+
+**[Watch the video demo (Duke OneDrive, about 25 minutes)](https://prodduke-my.sharepoint.com/:v:/g/personal/pp273_duke_edu/IQDe2zqbhn78TZ6Lt4pbCkjkAZV_0MWUDRCm9zpe0IUwF04?e=eFM2B4)**
+
+The walkthrough runs on the local demo app (`python -m demo`, see [Demo app](#demo-app-one-page-for-the-whole-walkthrough)) and has burned-in captions.
+
+| Part | Narrator | Covers |
+|---|---|---|
+| Scenes 1–6 | Paul Prommark | The question, CVE / NVD / CVSS / KEV, the Northbridge environment, the rating policy and playground, the tools |
+| Scenes 7–12 | Supawich Puengdang | Agent design, a complete run and a controlled failure, the validator, expected vs actual results, human evidence review, limitations |
+
 ## Repository layout
 
 ```
